@@ -11,8 +11,9 @@ name: Build and Deploy
 # - pull_request: build only.
 #
 # Every build uses the EUDIPLO commit in the dispatch payload, else the head of
-# EUDIPLO main. Published schema versions are append-only and immutable once on
-# main, so main always serves every released version (and possibly the next).
+# EUDIPLO main. Schema versions are append-only and frozen once released, so
+# main serves every released version, plus unreleased ones that may still change
+# (see README).
 on:
   push:
     branches: [main]

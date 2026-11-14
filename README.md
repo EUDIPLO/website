@@ -39,7 +39,7 @@ npm run serve
 | Pull request | build only | head of `main` |
 | Manual run | chosen | chosen commit or tag, default head of `main` |
 
-Published schema versions are append-only: EUDIPLO's CI refuses changes to a version once it is on `main`. So `main` serves every released version, and a version added on `main` is final before its release.
+Schema versions are append-only: EUDIPLO's CI refuses changes to a snapshot once a release shipped it, and never removes one. So `main` serves every released version. It can also serve a version that no release has shipped yet; such a snapshot may still change before its release, exactly like the files the `main` pre-release of the CLI writes with it. Production served unreleased versions before the move as well (v4 and v5 went live ahead of 10.0), so building from the latest release instead would take them offline.
 
 Required secrets: `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` here, and `WEBSITE_DISPATCH_TOKEN` in EUDIPLO/eudiplo (a token that may create repository dispatch events on this repository, i.e. *Contents: write*).
 
