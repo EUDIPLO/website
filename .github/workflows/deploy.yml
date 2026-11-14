@@ -10,10 +10,12 @@ name: Build and Deploy
 # - eudiplo-preview dispatch (every push to EUDIPLO/eudiplo main): preview.
 # - pull_request: build only.
 #
-# Every build uses the EUDIPLO commit in the dispatch payload, else the head of
-# EUDIPLO main. Schema versions are append-only and frozen once released, so
-# main serves every released version, plus unreleased ones that may still change
-# (see README).
+# Schemas come from the EUDIPLO commit in the dispatch payload, else the head of
+# EUDIPLO main; that commit must be on main. Schema versions are append-only and
+# frozen once released, so main serves every released version, plus unreleased
+# ones that may still change (see README). Production always takes the CLI
+# installer and SECURITY.md from the latest EUDIPLO release, so an unreleased
+# install.sh never reaches users who pipe it to bash.
 on:
   push:
     branches: [main]
@@ -76,9 +78,20 @@ jobs:
             ref="$(gh api repos/EUDIPLO/eudiplo/commits/main --jq .sha)"
           fi
           [[ "$ref" =~ ^(v[0-9]+\.[0-9]+\.[0-9]+|[0-9a-f]{40})$ ]] || { echo "Invalid EUDIPLO ref '$ref' (expected a commit SHA or release tag)"; exit 1; }
+          # Only reviewed code: the commit must be on main (fork or pull request
+          # commits share object storage and would otherwise check out).
+          status="$(gh api "repos/EUDIPLO/eudiplo/compare/${ref}...main" --jq .status)"
+          case "$status" in
+            identical|ahead) ;;
+            *) echo "EUDIPLO $ref is not on main (compare status '$status')"; exit 1 ;;
+          esac
+          release="$(gh api repos/EUDIPLO/eudiplo/releases/latest --jq .tag_name)"
+          [[ "$release" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Unexpected latest release '$release'"; exit 1; }
+          if [ "$environment" = production ]; then installer_ref="$release"; else installer_ref="$ref"; fi
           echo "environment=$environment" >> "$GITHUB_OUTPUT"
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
-          echo "Building against EUDIPLO $ref for $environment"
+          echo "installer_ref=$installer_ref" >> "$GITHUB_OUTPUT"
+          echo "Building $environment: schemas from EUDIPLO $ref, installer and SECURITY.md from $installer_ref"
 
       - name: Checkout website
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -94,6 +107,16 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             schemas
+          sparse-checkout-cone-mode: false
+
+      - name: Checkout EUDIPLO installer and security policy
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: EUDIPLO/eudiplo
+          ref: ${{ steps.target.outputs.installer_ref }}
+          path: eudiplo-installer
+          persist-credentials: false
+          sparse-checkout: |
             apps/cli/install.sh
             apps/website/install.sh
             SECURITY.md
@@ -105,6 +128,8 @@ jobs:
           node-version: 26
 
       - name: Build
+        env:
+          EUDIPLO_INSTALLER_DIR: eudiplo-installer
         run: npm run build
 
       - name: Check installer script

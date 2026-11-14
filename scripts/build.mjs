@@ -2,8 +2,11 @@
 // Stages eudiplo.dev in dist/: the landing page from this repository plus the
 // CLI installer, the published configuration schemas and the security contacts
 // from an EUDIPLO checkout. EUDIPLO_DIR points at that checkout (default:
-// ./eudiplo); the deploy workflow checks out the latest release for production
-// and the requested commit for preview.
+// ./eudiplo); EUDIPLO_INSTALLER_DIR, if set, is the checkout the installer and
+// SECURITY.md come from. The deploy workflow takes the schemas from the
+// dispatched EUDIPLO commit or the head of main, and for production the
+// installer from the latest EUDIPLO release. The schema id and $ref checks repeat
+// scripts/check-schema-ids.mjs in EUDIPLO; change both together.
 import {
   cpSync,
   existsSync,
@@ -16,6 +19,10 @@ import {
 import { resolve } from "node:path";
 const website = resolve(import.meta.dirname, "..");
 const eudiplo = resolve(website, process.env.EUDIPLO_DIR ?? "eudiplo");
+const installerSource = resolve(
+  website,
+  process.env.EUDIPLO_INSTALLER_DIR ?? eudiplo,
+);
 const output = resolve(website, "dist");
 if (!existsSync(resolve(eudiplo, "schemas")))
   throw new Error(
@@ -24,10 +31,10 @@ if (!existsSync(resolve(eudiplo, "schemas")))
 // Releases up to 9.x keep the installer under apps/website, later ones under
 // apps/cli.
 const installer = ["apps/cli/install.sh", "apps/website/install.sh"]
-  .map((path) => resolve(eudiplo, path))
+  .map((path) => resolve(installerSource, path))
   .find((path) => existsSync(path));
 if (!installer)
-  throw new Error(`Missing CLI installer in the EUDIPLO checkout: ${eudiplo}`);
+  throw new Error(`Missing CLI installer in the EUDIPLO checkout: ${installerSource}`);
 const schemas = new Map();
 for (const version of readdirSync(resolve(eudiplo, "schemas"))
   .filter((name) => /^v[1-9][0-9]*$/.test(name))
@@ -82,7 +89,7 @@ cpSync(installer, resolve(output, "install.sh"));
 const securityTxt = readFileSync(resolve(website, "security.txt"), "utf8");
 if (!/^contact:/im.test(securityTxt) || /^expires:/im.test(securityTxt))
   throw new Error("security.txt needs a Contact and no fixed Expires field");
-const securityPolicy = readFileSync(resolve(eudiplo, "SECURITY.md"), "utf8");
+const securityPolicy = readFileSync(resolve(installerSource, "SECURITY.md"), "utf8");
 for (const [, contact] of securityTxt.matchAll(/^contact:\s*(\S+)/gim))
   if (!securityPolicy.includes(contact))
     throw new Error(`security.txt Contact not in SECURITY.md: ${contact}`);
