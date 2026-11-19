@@ -298,10 +298,15 @@ h1 em { font-style: normal; color: var(--brand); }
 .door span { font-size: 14.5px; color: var(--ink-soft); line-height: 1.4; }
 .door.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .door.primary span { color: var(--paper); opacity: 0.74; }
-.hero-meta {
-  display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 26px;
-  font: 500 11.5px/1.5 var(--mono); color: var(--ink-soft); letter-spacing: 0.02em;
-}
+.proofbar { background: var(--surface); border-bottom: 1px solid var(--line); }
+.proofbar ul { list-style: none; margin-block: 0; padding-block: 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px clamp(20px, 3.4vw, 44px); }
+.proofbar li { display: grid; gap: 1px; }
+.proofbar small { font: 500 10.5px/1.5 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+.proofbar b { font: 700 15px/1.35 var(--body); }
+.proofbar .go { margin-left: auto; }
+.proofbar a { font: 700 14.5px/1.3 var(--body); color: var(--brand); text-decoration: none; white-space: nowrap; }
+.proofbar a:hover { text-decoration: underline; }
+@media (max-width: 860px) { .proofbar ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); } .proofbar .go { margin-left: 0; grid-column: 1 / -1; } }
 @media (max-width: 1080px) {
   .hero .wrap { grid-template-columns: minmax(0, 1fr); }
   .stage { max-width: 680px; }
@@ -539,7 +544,21 @@ h1 em { font-style: normal; color: var(--brand); }
 .below-head .tabs button { color: var(--deep-soft); }
 .below-head .tabs button[aria-pressed="true"] { background: var(--deep-ink); color: var(--deep); box-shadow: none; }
 @media (max-width: 600px) { .below-head .tabs { margin-left: 0; } }
-.hood-list { list-style: none; margin: 40px 0 0; padding: 0; columns: 2; column-gap: 56px; }
+.phases { margin-top: 36px; border-bottom: 1px solid var(--deep-line); }
+.phase { border-top: 1px solid var(--deep-line); }
+.phase summary {
+  display: grid; grid-template-columns: 5em minmax(0, 1fr) minmax(0, 1.5fr) 1.2em; gap: 4px 20px; align-items: baseline;
+  padding: 18px 0; cursor: pointer; list-style: none;
+}
+.phase summary::-webkit-details-marker { display: none; }
+.phase summary::after { content: "+"; grid-column: 4; grid-row: 1; justify-self: end; font: 500 20px/1 var(--mono); color: var(--signal); }
+.phase[open] summary::after { content: "−"; }
+.phase summary:hover .name { color: var(--signal); }
+.phase .range { font: 500 12px/1.9 var(--mono); color: var(--deep-soft); }
+.phase .name { font: 700 clamp(18px, 2vw, 22px)/1.2 var(--display); }
+.phase .sum { font-size: 15px; line-height: 1.45; color: var(--deep-soft); }
+.phase summary:focus-visible { outline-color: var(--signal); }
+.hood-list { list-style: none; margin: 0 0 24px; padding: 0; columns: 2; column-gap: 56px; }
 .hood-list li {
   break-inside: avoid; display: grid; grid-template-columns: 2.6em 1fr; gap: 2px 12px;
   padding: 14px 0; border-top: 1px solid var(--deep-line);
@@ -561,6 +580,9 @@ h1 em { font-style: normal; color: var(--brand); }
 @media (max-width: 860px) {
   .code-pair { grid-template-columns: minmax(0, 1fr); }
   .hood-list { columns: 1; }
+  .phase summary { grid-template-columns: 4.4em minmax(0, 1fr) 1.2em; }
+  .phase summary::after { grid-column: 3; }
+  .phase .sum { grid-column: 2; grid-row: 2; }
 }
 
 /* Self-hosted */
@@ -594,11 +616,11 @@ h1 em { font-style: normal; color: var(--brand); }
 .privacy-grid h3 { font: 720 21px/1.2 var(--display); margin: 0 0 8px; letter-spacing: -0.01em; }
 .privacy-grid p { color: var(--ink-soft); font-size: 16px; }
 .privacy-grid code { font: 500 0.85em var(--mono); color: var(--ink); }
+.privacy-more { margin-top: 28px; }
 @media (max-width: 900px) {
   .path { grid-template-columns: minmax(0, 1fr); }
-  .privacy-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 600px) { .privacy-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 760px) { .privacy-grid { grid-template-columns: minmax(0, 1fr); } }
 
 .provider {
   display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 48px); align-items: center;
@@ -623,13 +645,13 @@ h1 em { font-style: normal; color: var(--brand); }
 
 /* Web client */
 .webclient { background: var(--surface); border-block: 1px solid var(--line); padding-block: clamp(64px, 9vw, 104px); }
-.wc-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: clamp(28px, 4vw, 52px); margin-top: 44px; align-items: center; }
+.wc-grid { display: grid; gap: clamp(28px, 4vw, 44px); margin-top: 44px; }
 .wc-shot {
   margin: 0; border: 1px solid var(--line-strong); border-radius: 12px; overflow: hidden;
   background: var(--surface-2); box-shadow: var(--shadow-lg); font-size: 14px;
 }
 .wc-shot img { display: block; width: 100%; height: auto; }
-.wc-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
+.wc-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px 32px; }
 .wc-list li { display: grid; align-content: start; gap: 2px; padding-left: 14px; border-left: 2px solid var(--brand); }
 .wc-list b { font: 720 18px/1.25 var(--display); letter-spacing: -0.005em; }
 .wc-list span { font-size: 15px; line-height: 1.45; color: var(--ink-soft); }
@@ -638,7 +660,7 @@ h1 em { font-style: normal; color: var(--brand); }
 .wc-note code { font: 500 0.85em var(--mono); color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); padding: 1px 6px; border-radius: 5px; }
 .wc-note a { color: var(--brand); font-weight: 700; text-decoration: none; white-space: nowrap; }
 .wc-note a:hover { text-decoration: underline; }
-@media (max-width: 960px) { .wc-grid { grid-template-columns: minmax(0, 1fr); } .wc-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 28px; } }
+@media (max-width: 960px) { .wc-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .wc-list { grid-template-columns: minmax(0, 1fr); } }
 
 /* Use cases */
@@ -731,22 +753,10 @@ h1 em { font-style: normal; color: var(--brand); }
 
 /* Architecture */
 .arch-sec { background: var(--surface); border-block: 1px solid var(--line); padding-block: clamp(64px, 9vw, 104px); }
-.arch { display: grid; grid-template-columns: minmax(0, 1fr) 96px minmax(0, 1.25fr) 96px minmax(0, 1fr); align-items: center; margin-top: 44px; }
 .node { border: 1px solid var(--line); border-radius: 14px; padding: 18px; background: var(--paper); min-width: 0; }
 .node h4 { font: 720 19px/1.15 var(--display); margin: 0 0 6px; }
 .node p { font-size: 14.5px; line-height: 1.45; color: var(--ink-soft); }
-.node.core { background: var(--deep); color: var(--deep-ink); border-color: var(--deep); padding: 22px; box-shadow: var(--shadow-lg); }
-.node.core .brand { font-size: 24px; }
-.node.core p { color: var(--deep-soft); margin-top: 10px; }
-.node.core ul { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.node.core li { font: 500 11.5px/1.4 var(--mono); padding: 4px 8px; border-radius: 6px; background: var(--deep-chip); border: 1px solid var(--deep-line); }
-.conn { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 0 6px; }
-.conn .wire { width: 100%; height: 2px; background: var(--line-strong); position: relative; }
-.conn .wire::before, .conn .wire::after { content: ""; position: absolute; top: -4px; width: 0; height: 0; border-block: 5px solid transparent; }
-.conn .wire::before { left: -1px; border-right: 7px solid var(--line-strong); }
-.conn .wire::after { right: -1px; border-left: 7px solid var(--line-strong); }
-.conn span { font: 500 10.5px/1.35 var(--mono); color: var(--ink-soft); }
-.arch-rows { display: grid; gap: 14px; margin-top: 28px; }
+.arch-rows { display: grid; gap: 14px; margin-top: 44px; }
 .arch-row { display: grid; grid-template-columns: 200px repeat(4, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
 .arch-row.three { grid-template-columns: 200px repeat(3, minmax(0, 1fr)); }
 .arch-row > .label { font: 600 11.5px/1.4 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); padding-top: 14px; }
@@ -754,15 +764,11 @@ h1 em { font-style: normal; color: var(--brand); }
 .arch-row .node h4 { font-size: 16px; }
 .arch-row .node p { font-size: 13.5px; }
 @media (max-width: 960px) {
-  .arch { grid-template-columns: minmax(0, 1fr); gap: 0; }
-  .conn { flex-direction: row; justify-content: center; padding: 10px 0; gap: 10px; }
-  .conn .wire { width: 2px; height: 28px; }
-  .conn .wire::before { left: -4px; top: -1px; border-block: 0; border-inline: 5px solid transparent; border-bottom: 7px solid var(--line-strong); border-right-width: 5px; border-right-color: transparent; }
-  .conn .wire::after { left: -4px; right: auto; top: auto; bottom: -1px; border-block: 0; border-inline: 5px solid transparent; border-top: 7px solid var(--line-strong); border-left-width: 5px; border-left-color: transparent; }
   .arch-row, .arch-row.three { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .arch-row > .label { grid-column: 1 / -1; padding-top: 6px; }
 }
-.cac { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: clamp(28px, 4vw, 56px); margin-top: 80px; align-items: start; }
+.cac { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: clamp(28px, 4vw, 56px); margin-top: 64px; align-items: center; }
+.cac > .cli { margin-top: 0; }
 .cac h3 { font: 720 clamp(26px, 2.8vw, 34px)/1.1 var(--display); margin: 12px 0 14px; letter-spacing: -0.015em; }
 .cac > div > p { color: var(--ink-soft); }
 .cli { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 12px; }
@@ -789,9 +795,10 @@ h1 em { font-style: normal; color: var(--brand); }
 .cmd { display: flex; align-items: center; gap: 8px; background: var(--deep-chip); border: 1px solid var(--deep-line); border-radius: 10px; padding: 7px 7px 7px 14px; }
 .cmd code { flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; font: 500 13px/1.6 var(--mono); }
 .cmd .copy { color: var(--deep-ink); border-color: var(--deep-line); }
-.facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
-.facts li { padding-left: 16px; border-left: 2px solid var(--line-strong); color: var(--ink-soft); font-size: 16px; }
-.facts b { color: var(--ink); }
+.facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.facts li { display: grid; gap: 2px; padding-left: 16px; border-left: 2px solid var(--line-strong); color: var(--ink-soft); font-size: 15.5px; }
+.facts a { font: 700 17px/1.3 var(--body); color: var(--ink); text-decoration: none; }
+.facts a:hover { color: var(--brand); text-decoration: underline; }
 .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 6px; }
 .links a { font: 700 14.5px/1 var(--body); text-decoration: none; padding: 10px 13px; border-radius: 9px; border: 1px solid var(--line-strong); color: var(--ink); }
 .links a:hover { border-color: var(--brand); color: var(--brand); }
@@ -846,12 +853,11 @@ h1 em { font-style: normal; color: var(--brand); }
       <div>
         <p class="kicker"><span class="dot" aria-hidden="true"></span>Open source · Self-hosted · No SaaS</p>
         <h1 id="hero-title">One API call to the <em>EU Digital Identity Wallet.</em></h1>
-        <p class="lede">EUDIPLO runs on your own servers, between your application and your users' wallets. Ask for a proof of age or a verified identity, or issue credentials of your own. EUDIPLO runs the protocols, checks trust and revocation, and hands your backend a clean JSON result. The personal data never passes through anyone else's cloud.</p>
+        <p class="lede">EUDIPLO runs on your own servers, between your application and your users' wallets. Ask for a proof of age or a verified identity, or issue credentials of your own, and get a clean JSON result back.</p>
         <div class="doors">
           <a class="door primary" href="#start"><strong>I'm building <span aria-hidden="true">→</span></strong><span>Run it locally and follow a cookbook</span></a>
           <a class="door" href="#self-hosted"><strong>I'm evaluating <span aria-hidden="true">→</span></strong><span>Data protection, use cases and deadlines</span></a>
         </div>
-        <p class="hero-meta"><span>Runs on your servers</span><span>Web client included</span><span>Apache-2.0</span><span>LF Decentralized Trust</span><span>OpenID4VCI 1.0</span><span>OpenID4VP 1.0</span></p>
       </div>
 
       <div class="stage" id="stage" aria-label="Example wallet flow">
@@ -890,6 +896,16 @@ h1 em { font-style: normal; color: var(--brand); }
       </div>
     </div>
   </section>
+
+  <aside class="proofbar" aria-label="Where EUDIPLO runs">
+    <ul class="wrap">
+      <li><small>Hosted by</small><b>LF Decentralized Trust</b></li>
+      <li><small>Runs at</small><b>EUDI Wallet Playground · espuni</b></li>
+      <li><small>Tested with</small><b>EU Reference Wallet and 3 more</b></li>
+      <li><small>Checked against</small><b>OpenID Foundation conformance suite</b></li>
+      <li class="go"><a href="#proof">In production →</a></li>
+    </ul>
+  </aside>
 
   <section class="how" id="how" aria-labelledby="how-title">
     <div class="wrap above">
@@ -995,7 +1011,7 @@ TOKEN=$(<span class="tf">curl</span> -s -X POST https://eudiplo.example.com/api/
 }</code></pre>
         </figure>
       </div>
-      <p class="api-note"><b>Not on TypeScript?</b> Every instance serves its OpenAPI 3.1 description at <code>/api/docs-json</code> and an interactive Swagger UI at <code>/api/docs</code>. Call the API from any stack, or generate a client for Java, Python, Go or .NET. <a href="https://docs.eudiplo.dev/reference/api">API reference →</a></p>
+      <p class="api-note"><b>Not on TypeScript?</b> Every instance serves an OpenAPI 3.1 description, so you can call the API from any stack or generate a client. <a href="https://docs.eudiplo.dev/reference/api">API reference →</a></p>
     </div>
 
     <div class="waterline" aria-hidden="true">
@@ -1020,42 +1036,82 @@ TOKEN=$(<span class="tf">curl</span> -s -X POST https://eudiplo.example.com/api/
             <button type="button" data-flow="issue" aria-pressed="false">Issue</button>
           </div>
         </div>
-        <ol class="hood-list" data-only="verify">
-          <li><span class="n">01</span><span class="t">Build the DCQL query from your configuration</span><span class="spec">OpenID4VP 1.0 · DCQL</span></li>
-          <li><span class="n">02</span><span class="t">Sign the request with your access certificate and a fresh nonce</span><span class="spec">Signed request object · x509_hash client ID</span></li>
-          <li><span class="n">03</span><span class="t">Attach your registration certificate, so the wallet can show who is asking and why</span><span class="spec">verifier_info</span></li>
-          <li><span class="n">04</span><span class="t">Offer the right channel: QR code, same-device link or the browser's credential picker</span><span class="spec">Digital Credentials API · ISO 18013-7 Annex C</span></li>
-          <li><span class="n">05</span><span class="t">Keep the wallet-facing ID separate from your session</span><span class="spec">OpenID4VP §13.3 · one-time response code</span></li>
-          <li><span class="n">06</span><span class="t">Accept only an encrypted response</span><span class="spec">direct_post.jwt · JWE</span></li>
-          <li><span class="n">07</span><span class="t">Verify the issuer's signature on the credential</span><span class="spec">SD-JWT VC · ISO 18013-5 mdoc</span></li>
-          <li><span class="n">08</span><span class="t">Check every disclosed claim against its digest</span><span class="spec">SD-JWT selective disclosure</span></li>
-          <li><span class="n">09</span><span class="t">Verify that the credential is bound to the holder's device</span><span class="spec">Key binding JWT · mdoc DeviceAuth</span></li>
-          <li><span class="n">10</span><span class="t">Check the issuer against your trust list</span><span class="spec">ETSI TS 119 602 lists of trusted entities</span></li>
-          <li><span class="n">11</span><span class="t">Check that the credential is not revoked or suspended</span><span class="spec">Token Status List</span></li>
-          <li><span class="n">12</span><span class="t">Match the answer to your query, claim by claim</span><span class="spec">DCQL claims and values</span></li>
-          <li><span class="n">13</span><span class="t">Record the session for audit and troubleshooting</span><span class="spec">Session record · OpenTelemetry</span></li>
-          <li><span class="n">14</span><span class="t">Deliver one clean result to your backend</span><span class="spec">Webhook · REST · server-sent events</span></li>
-        </ol>
-        <ol class="hood-list" data-only="issue" hidden>
-          <li><span class="n">01</span><span class="t">Check your claims against the credential type and store them encrypted with the session</span><span class="spec">Credential configuration · encrypted at rest</span></li>
-          <li><span class="n">02</span><span class="t">Create the offer with a one-time pre-authorized code and an optional PIN</span><span class="spec">OpenID4VCI 1.0 · pre-authorized code · tx_code</span></li>
-          <li><span class="n">03</span><span class="t">Publish your name, logo and credential types as issuer metadata, signed on request</span><span class="spec">Credential issuer metadata · signed metadata</span></li>
-          <li><span class="n">04</span><span class="t">Act as the wallet's authorization server</span><span class="spec">OAuth 2.0 authorization server metadata (RFC 8414)</span></li>
-          <li><span class="n">05</span><span class="t">Check the wallet attestation against your list of trusted wallet providers</span><span class="spec">OAuth 2.0 Attestation-Based Client Authentication · ETSI TS 119 602</span></li>
-          <li><span class="n">06</span><span class="t">Redeem the code once and before it expires, and lock it after repeated wrong PINs</span><span class="spec">Single-use pre-authorized code · tx_code</span></li>
-          <li><span class="n">07</span><span class="t">Bind the access token to a key in the wallet</span><span class="spec">DPoP (RFC 9449)</span></li>
-          <li><span class="n">08</span><span class="t">Hand out a fresh nonce for the key proof</span><span class="spec">OpenID4VCI 1.0 · nonce endpoint</span></li>
-          <li><span class="n">09</span><span class="t">Verify that the wallet holds the key the credential will be bound to</span><span class="spec">Key proof · c_nonce</span></li>
-          <li><span class="n">10</span><span class="t">Check the key attestation that shows the key is kept in secure hardware</span><span class="spec">Key attestation · key_storage</span></li>
-          <li><span class="n">11</span><span class="t">Issue one credential per wallet key, so separate presentations can't be linked</span><span class="spec">OpenID4VCI 1.0 · batch issuance</span></li>
-          <li><span class="n">12</span><span class="t">Reserve a random entry in a status list, so you can revoke or suspend the credential later</span><span class="spec">Token Status List</span></li>
-          <li><span class="n">13</span><span class="t">Build the SD-JWT VC with a salted digest for every claim the holder may withhold</span><span class="spec">SD-JWT VC · selective disclosure</span></li>
-          <li><span class="n">14</span><span class="t">Check that your issuer certificate is valid and not revoked, then sign in your HSM or KMS</span><span class="spec">x5c · CRL · PKCS#11 · AWS KMS · Vault</span></li>
-          <li><span class="n">15</span><span class="t">Encrypt the credential response when the wallet asks for it</span><span class="spec">Credential response encryption · JWE</span></li>
-          <li><span class="n">16</span><span class="t">Accept the wallet's confirmation that it stored the credential</span><span class="spec">OpenID4VCI 1.0 · notification endpoint</span></li>
-          <li><span class="n">17</span><span class="t">Record the session for audit and troubleshooting</span><span class="spec">Session record · OpenTelemetry</span></li>
-          <li><span class="n">18</span><span class="t">Pass the confirmation to your backend</span><span class="spec">Webhook · REST · server-sent events</span></li>
-        </ol>
+        <div class="phases" data-only="verify">
+          <details class="phase">
+            <summary><span class="range">01–04</span><span class="name">Build and sign the request</span><span class="sum">DCQL query, access and registration certificate, QR code or browser picker</span></summary>
+            <ol class="hood-list">
+                <li><span class="n">01</span><span class="t">Build the DCQL query from your configuration</span><span class="spec">OpenID4VP 1.0 · DCQL</span></li>
+                <li><span class="n">02</span><span class="t">Sign the request with your access certificate and a fresh nonce</span><span class="spec">Signed request object · x509_hash client ID</span></li>
+                <li><span class="n">03</span><span class="t">Attach your registration certificate, so the wallet can show who is asking and why</span><span class="spec">verifier_info</span></li>
+                <li><span class="n">04</span><span class="t">Offer the right channel: QR code, same-device link or the browser's credential picker</span><span class="spec">Digital Credentials API · ISO 18013-7 Annex C</span></li>
+            </ol>
+          </details>
+          <details class="phase">
+            <summary><span class="range">05–06</span><span class="name">Receive the answer</span><span class="sum">One-time response code, encrypted responses only</span></summary>
+            <ol class="hood-list">
+                <li><span class="n">05</span><span class="t">Keep the wallet-facing ID separate from your session</span><span class="spec">OpenID4VP §13.3 · one-time response code</span></li>
+                <li><span class="n">06</span><span class="t">Accept only an encrypted response</span><span class="spec">direct_post.jwt · JWE</span></li>
+            </ol>
+          </details>
+          <details class="phase">
+            <summary><span class="range">07–12</span><span class="name">Verify the credential</span><span class="sum">Signature, disclosed claims, device binding, trust list, revocation</span></summary>
+            <ol class="hood-list">
+                <li><span class="n">07</span><span class="t">Verify the issuer's signature on the credential</span><span class="spec">SD-JWT VC · ISO 18013-5 mdoc</span></li>
+                <li><span class="n">08</span><span class="t">Check every disclosed claim against its digest</span><span class="spec">SD-JWT selective disclosure</span></li>
+                <li><span class="n">09</span><span class="t">Verify that the credential is bound to the holder's device</span><span class="spec">Key binding JWT · mdoc DeviceAuth</span></li>
+                <li><span class="n">10</span><span class="t">Check the issuer against your trust list</span><span class="spec">ETSI TS 119 602 lists of trusted entities</span></li>
+                <li><span class="n">11</span><span class="t">Check that the credential is not revoked or suspended</span><span class="spec">Token Status List</span></li>
+                <li><span class="n">12</span><span class="t">Match the answer to your query, claim by claim</span><span class="spec">DCQL claims and values</span></li>
+            </ol>
+          </details>
+          <details class="phase">
+            <summary><span class="range">13–14</span><span class="name">Deliver the result</span><span class="sum">Session record, then one JSON result to your backend</span></summary>
+            <ol class="hood-list">
+                <li><span class="n">13</span><span class="t">Record the session for audit and troubleshooting</span><span class="spec">Session record · OpenTelemetry</span></li>
+                <li><span class="n">14</span><span class="t">Deliver one clean result to your backend</span><span class="spec">Webhook · REST · server-sent events</span></li>
+            </ol>
+          </details>
+        </div>
+        <div class="phases" data-only="issue" hidden>
+          <details class="phase">
+            <summary><span class="range">01–04</span><span class="name">Create the offer</span><span class="sum">Claims check, pre-authorized code, issuer and authorization server metadata</span></summary>
+            <ol class="hood-list">
+                <li><span class="n">01</span><span class="t">Check your claims against the credential type and store them encrypted with the session</span><span class="spec">Credential configuration · encrypted at rest</span></li>
+                <li><span class="n">02</span><span class="t">Create the offer with a one-time pre-authorized code and an optional PIN</span><span class="spec">OpenID4VCI 1.0 · pre-authorized code · tx_code</span></li>
+                <li><span class="n">03</span><span class="t">Publish your name, logo and credential types as issuer metadata, signed on request</span><span class="spec">Credential issuer metadata · signed metadata</span></li>
+                <li><span class="n">04</span><span class="t">Act as the wallet's authorization server</span><span class="spec">OAuth 2.0 authorization server metadata (RFC 8414)</span></li>
+            </ol>
+          </details>
+          <details class="phase">
+            <summary><span class="range">05–08</span><span class="name">Authorize the wallet</span><span class="sum">Wallet attestation, single-use code, DPoP-bound token, fresh nonce</span></summary>
+            <ol class="hood-list">
+                <li><span class="n">05</span><span class="t">Check the wallet attestation against your list of trusted wallet providers</span><span class="spec">OAuth 2.0 Attestation-Based Client Authentication · ETSI TS 119 602</span></li>
+                <li><span class="n">06</span><span class="t">Redeem the code once and before it expires, and lock it after repeated wrong PINs</span><span class="spec">Single-use pre-authorized code · tx_code</span></li>
+                <li><span class="n">07</span><span class="t">Bind the access token to a key in the wallet</span><span class="spec">DPoP (RFC 9449)</span></li>
+                <li><span class="n">08</span><span class="t">Hand out a fresh nonce for the key proof</span><span class="spec">OpenID4VCI 1.0 · nonce endpoint</span></li>
+            </ol>
+          </details>
+          <details class="phase">
+            <summary><span class="range">09–15</span><span class="name">Issue the credential</span><span class="sum">Key proof, key attestation, status list entry, selective disclosure, signature</span></summary>
+            <ol class="hood-list">
+                <li><span class="n">09</span><span class="t">Verify that the wallet holds the key the credential will be bound to</span><span class="spec">Key proof · c_nonce</span></li>
+                <li><span class="n">10</span><span class="t">Check the key attestation that shows the key is kept in secure hardware</span><span class="spec">Key attestation · key_storage</span></li>
+                <li><span class="n">11</span><span class="t">Issue one credential per wallet key, so separate presentations can't be linked</span><span class="spec">OpenID4VCI 1.0 · batch issuance</span></li>
+                <li><span class="n">12</span><span class="t">Reserve a random entry in a status list, so you can revoke or suspend the credential later</span><span class="spec">Token Status List</span></li>
+                <li><span class="n">13</span><span class="t">Build the SD-JWT VC with a salted digest for every claim the holder may withhold</span><span class="spec">SD-JWT VC · selective disclosure</span></li>
+                <li><span class="n">14</span><span class="t">Check that your issuer certificate is valid and not revoked, then sign in your HSM or KMS</span><span class="spec">x5c · CRL · PKCS#11 · AWS KMS · Vault</span></li>
+                <li><span class="n">15</span><span class="t">Encrypt the credential response when the wallet asks for it</span><span class="spec">Credential response encryption · JWE</span></li>
+            </ol>
+          </details>
+          <details class="phase">
+            <summary><span class="range">16–18</span><span class="name">Confirm and deliver</span><span class="sum">Wallet confirmation, session record, webhook to your backend</span></summary>
+            <ol class="hood-list">
+                <li><span class="n">16</span><span class="t">Accept the wallet's confirmation that it stored the credential</span><span class="spec">OpenID4VCI 1.0 · notification endpoint</span></li>
+                <li><span class="n">17</span><span class="t">Record the session for audit and troubleshooting</span><span class="spec">Session record · OpenTelemetry</span></li>
+                <li><span class="n">18</span><span class="t">Pass the confirmation to your backend</span><span class="spec">Webhook · REST · server-sent events</span></li>
+            </ol>
+          </details>
+        </div>
         <p class="issuance-note" data-only="verify"><b>Issuing takes more.</b> One call to <code>POST /api/issuer/offer</code> starts a full OpenID4VCI flow. <button type="button" class="flow-link" data-flow-go="issue">See the steps for issuing →</button></p>
         <p class="issuance-note" data-only="issue" hidden><b>With your login in front.</b> In the authorization code flow, EUDIPLO also runs pushed authorization requests, PKCE and the sign-in through Keycloak or any OpenID Connect provider. Claims can also come from your own API at the moment of issuance. <button type="button" class="flow-link" data-flow-go="verify">See the steps for verifying →</button></p>
       </div>
@@ -1067,7 +1123,7 @@ TOKEN=$(<span class="tf">curl</span> -s -X POST https://eudiplo.example.com/api/
       <div class="sec-head">
         <p class="kicker">Self-hosted by design</p>
         <h2 id="sh-title">Your servers. Your keys. Your users' data.</h2>
-        <p>EUDIPLO is software you run, not a service you rent. Install it on-premises, in your private cloud or in any EU data center. What your users share from their wallets reaches your systems and nobody else's.</p>
+        <p>EUDIPLO is software you run, not a service you rent. What your users share from their wallets reaches your systems and nobody else's.</p>
       </div>
       <div class="paths">
         <div class="path">
@@ -1097,35 +1153,23 @@ TOKEN=$(<span class="tf">curl</span> -s -X POST https://eudiplo.example.com/api/
       <div class="privacy-grid">
         <article>
           <h3>Personal data stays with you</h3>
-          <p>The wallet encrypts its answer to a key your instance creates for that one request. It is decrypted on your server and goes straight to your backend.</p>
+          <p>The wallet encrypts its answer to a key your instance creates for that one request. It is decrypted on your server, and deleted or anonymized after a retention period you set, 24 hours by default.</p>
         </article>
         <article>
           <h3>Signing keys in your HSM</h3>
           <p>Create signing keys in an HSM over PKCS#11, AWS KMS or HashiCorp Vault. They are generated as non-exportable, and every signature happens inside.</p>
         </article>
         <article>
-          <h3>Only what you need</h3>
-          <p>Requests name the exact claims, and selective disclosure keeps everything else in the wallet. An age check gets a yes or no, not a birth date.</p>
-        </article>
-        <article>
-          <h3>Deleted on your schedule</h3>
-          <p>Session data is deleted or anonymized after a retention period you set per tenant, 24 hours by default. Request logging is off unless you turn it on.</p>
-        </article>
-        <article>
           <h3>Nothing phones home</h3>
           <p>No analytics, license checks or update checks. Traces and metrics go only to an OpenTelemetry collector you run, or nowhere with <code>OTEL_SDK_DISABLED=true</code>.</p>
         </article>
-        <article>
-          <h3>Code you can audit</h3>
-          <p>Apache-2.0 and developed in the open. Your security team can read every line, and nothing depends on a vendor's uptime or pricing.</p>
-        </article>
       </div>
+      <p class="privacy-more"><a class="more" href="https://docs.eudiplo.dev/concepts/security-model">Read the security model →</a></p>
       <div class="provider">
         <div>
           <p class="kicker">For service providers</p>
           <h3>Offer it as a service, with the same privacy for every customer.</h3>
-          <p>EUDIPLO is multi-tenant. Hosting companies, identity providers and public IT service centers can run one installation for many customers. Each tenant has its own keys, certificates, trust lists, configurations, API clients and retention period, and every request is scoped to one tenant.</p>
-          <p>Your customers get wallet verification and issuance without running anything themselves, hosted where you choose, on code they can audit. espuni runs age verification for online platforms this way.</p>
+          <p>EUDIPLO is multi-tenant: hosting companies, identity providers and public IT service centers can run one installation for many customers. Each tenant has its own keys, certificates, trust lists, configurations, API clients and retention period. espuni runs age verification for online platforms this way.</p>
           <a class="more" href="https://docs.eudiplo.dev/operate/tenants-and-access">Tenants and access →</a>
         </div>
         <div class="install">
@@ -1143,7 +1187,7 @@ TOKEN=$(<span class="tf">curl</span> -s -X POST https://eudiplo.example.com/api/
       <div class="sec-head">
         <p class="kicker">Web client included</p>
         <h2 id="wc-title">Not just an API. Your team works in the browser.</h2>
-        <p>EUDIPLO comes with a web client that runs on your servers next to it. Your team sets up credentials and verification requests, tests them with a real wallet and follows every session, without writing code.</p>
+        <p>The web client runs on your servers next to EUDIPLO. Your team sets up credentials and verification requests, tests them with a real wallet and follows every session, without writing code.</p>
       </div>
       <div class="wc-grid">
         <figure class="wc-shot">
@@ -1153,19 +1197,19 @@ TOKEN=$(<span class="tf">curl</span> -s -X POST https://eudiplo.example.com/api/
           </div>
           <picture>
             <source srcset="img/web-client-dark.webp" media="(prefers-color-scheme: dark)">
-            <img src="img/web-client-light.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="The EUDIPLO web client dashboard. The menu lists API clients, activity logs, keys, KMS providers, credential types, issuer settings, trust lists, status lists and verification. The page shows counts of configurations, key chains and sessions, the health of the access certificate and trust lists, and recent sessions.">
+            <img src="img/web-client-light.webp" width="2000" height="942" loading="lazy" decoding="async" alt="The EUDIPLO web client dashboard. The menu lists settings, administration, keys, trust lists, KMS providers, credential issuance, credential verification and sessions. The page offers shortcuts to issue a credential and to request a presentation, shows the sessions, success rate, failed and pending sessions of the last 24 hours, and charts the sessions by outcome next to the most frequent failure reasons.">
           </picture>
         </figure>
         <ul class="wc-list">
-          <li><b>Credentials and requests</b><span>Set up credential types, issuer settings and verification requests in forms, or in a JSON editor that checks every field against the schema.</span></li>
-          <li><b>Test with a real wallet</b><span>Create an issuance offer or a verification request, then scan the QR code with your phone or use the browser's Digital Credentials API.</span></li>
-          <li><b>Every session in view</b><span>Filter sessions by type, status, configuration and failure code, and open one to read its logs.</span></li>
-          <li><b>Keys and trust</b><span>Keys and certificates, KMS providers, trust lists, status lists and the connection to a registrar.</span></li>
-          <li><b>Access and audit</b><span>API clients with roles, single sign-on through Keycloak, and an audit log of who changed which configuration.</span></li>
-          <li><b>Tenants and configuration</b><span>Manage tenants and export or import configuration. Configurations kept as code are marked, so nobody edits them by accident.</span></li>
+          <li><b>Credentials and requests</b><span>Forms, or a JSON editor that checks every field against the schema.</span></li>
+          <li><b>Test with a real wallet</b><span>Create an offer or a request and scan the QR code with your phone.</span></li>
+          <li><b>Every session in view</b><span>Filter by type, status and failure code, and read a session's logs.</span></li>
+          <li><b>Keys and trust</b><span>Keys, certificates, KMS providers, trust lists, status lists and the registrar.</span></li>
+          <li><b>Access and audit</b><span>API clients with roles, single sign-on through Keycloak, and an audit log.</span></li>
+          <li><b>Tenants and configuration</b><span>Manage tenants, and export or import configuration.</span></li>
         </ul>
       </div>
-      <p class="wc-note"><b>Prefer code?</b> Everything the web client does is also available through the API and the CLI. To look around with sample data, run <code>eudiplo demo</code> and open <code>localhost:4200</code>. <a href="https://docs.eudiplo.dev/#get-started">Demo sign-in →</a></p>
+      <p class="wc-note"><b>Prefer code?</b> Everything the web client does is also available through the API and the CLI. Run <code>eudiplo demo</code> to look around with sample data. <a href="https://docs.eudiplo.dev/#get-started">Demo sign-in →</a></p>
     </div>
   </section>
 
@@ -1288,25 +1332,8 @@ TOKEN=$(<span class="tf">curl</span> -s -X POST https://eudiplo.example.com/api/
     <div class="wrap">
       <div class="sec-head">
         <p class="kicker">Under the hood</p>
-        <h2 id="arch-title">One service between your systems and every wallet.</h2>
-        <p>EUDIPLO runs next to your application, on your infrastructure. It holds the keys, keeps the sessions and talks to the trust ecosystem, so your application doesn't have to.</p>
-      </div>
-      <div class="arch">
-        <div class="node">
-          <h4>Your application</h4>
-          <p>Creates requests and offers through the REST API or the TypeScript SDK. Your team manages everything in the <a href="#web-client">web client</a> or the CLI.</p>
-        </div>
-        <div class="conn" aria-hidden="true"><div class="wire"></div><span>REST · webhooks</span></div>
-        <div class="node core">
-          <span class="brand"><svg class="mark" viewBox="0 0 176 176" aria-hidden="true" focusable="false"><use href="#diplo"/></svg>EUDIPLO</span>
-          <p>Issuer, verifier and trust anchor in one service, with separate tenants for each organization or product.</p>
-          <ul><li>Issuance</li><li>Verification</li><li>Trust lists</li><li>Status lists</li><li>Keys</li><li>Sessions</li><li>Tenants</li></ul>
-        </div>
-        <div class="conn" aria-hidden="true"><div class="wire"></div><span>OpenID4VCI · OpenID4VP · DC API</span></div>
-        <div class="node">
-          <h4>Wallets</h4>
-          <p>Any wallet that follows the EUDI specifications, on the same device or by QR code from another screen.</p>
-        </div>
+        <h2 id="arch-title">Fits the infrastructure you already run.</h2>
+        <p>EUDIPLO is one service next to your application. It holds the keys, keeps the sessions and talks to the trust ecosystem.</p>
       </div>
       <div class="arch-rows">
         <div class="arch-row">
@@ -1328,42 +1355,13 @@ TOKEN=$(<span class="tf">curl</span> -s -X POST https://eudiplo.example.com/api/
         <div>
           <p class="kicker">Configuration as code</p>
           <h3>Every credential and verification is a file you can review.</h3>
-          <p>Each configuration is a JSON file with a published schema. Your editor autocompletes it, your CI validates it, and the CLI shows a plan before anything changes on a running instance.</p>
-          <ul class="cli">
-            <li><code>eudiplo config validate</code><span>Check every file against its schema</span></li>
-            <li><code>eudiplo config plan</code><span>See what an import would change</span></li>
-            <li><code>eudiplo config import</code><span>Apply it to a running instance</span></li>
-          </ul>
+          <p>Each configuration is a JSON file with a published schema. Your editor autocompletes it, your CI validates it, and the CLI shows a plan before anything changes.</p>
         </div>
-        <figure class="code">
-          <figcaption class="code-head"><b>presentation/age-over-18.json</b><button type="button" class="copy" data-copy="cfg-json">Copy</button></figcaption>
-<pre><code id="cfg-json">{
-  <span class="tp">"$schema"</span>: <span class="ts">"https://eudiplo.dev/schemas/v4/PresentationConfigFile.schema.json"</span>,
-  <span class="tp">"spec"</span>: {
-    <span class="tp">"id"</span>: <span class="ts">"age-over-18"</span>,
-    <span class="tp">"description"</span>: <span class="ts">"Proof of age for checkout"</span>,
-    <span class="tp">"statusCheckMode"</span>: <span class="ts">"strict"</span>,
-    <span class="tp">"webhookEndpointId"</span>: <span class="ts">"shop-backend"</span>,
-    <span class="tp">"dcql_query"</span>: {
-      <span class="tp">"credentials"</span>: [
-        {
-          <span class="tp">"id"</span>: <span class="ts">"pid"</span>,
-          <span class="tp">"format"</span>: <span class="ts">"dc+sd-jwt"</span>,
-          <span class="tp">"meta"</span>: { <span class="tp">"vct_values"</span>: [<span class="ts">"urn:eudi:pid:1"</span>] },
-          <span class="tp">"claims"</span>: [{ <span class="tp">"path"</span>: [<span class="ts">"age_equal_or_over"</span>, <span class="ts">"18"</span>] }]
-        },
-        {
-          <span class="tp">"id"</span>: <span class="ts">"pid-mdoc"</span>,
-          <span class="tp">"format"</span>: <span class="ts">"mso_mdoc"</span>,
-          <span class="tp">"meta"</span>: { <span class="tp">"doctype_value"</span>: <span class="ts">"eu.europa.ec.eudi.pid.1"</span> },
-          <span class="tp">"claims"</span>: [{ <span class="tp">"path"</span>: [<span class="ts">"eu.europa.ec.eudi.pid.1"</span>, <span class="ts">"age_over_18"</span>] }]
-        }
-      ],
-      <span class="tp">"credential_sets"</span>: [{ <span class="tp">"options"</span>: [[<span class="ts">"pid"</span>], [<span class="ts">"pid-mdoc"</span>]] }]
-    }
-  }
-}</code></pre>
-        </figure>
+        <ul class="cli">
+          <li><code>eudiplo config validate</code><span>Check every file against its schema</span></li>
+          <li><code>eudiplo config plan</code><span>See what an import would change</span></li>
+          <li><code>eudiplo config import</code><span>Apply it to a running instance</span></li>
+        </ul>
       </div>
     </div>
   </section>
@@ -1402,20 +1400,13 @@ TOKEN=$(<span class="tf">curl</span> -s -X POST https://eudiplo.example.com/api/
         </div>
         <div class="panel decide" id="decide">
           <h3>Plan a rollout</h3>
-          <p>What you need to know before EUDIPLO handles real credentials.</p>
+          <p>What to read before EUDIPLO handles real credentials.</p>
           <ul class="facts">
-            <li><b>Self-hosted.</b> It runs on your servers, in the country you choose. Signing keys stay in your HSM, AWS KMS or Vault.</li>
-            <li><b>Free to use.</b> Apache-2.0, with no license or per-transaction fees.</li>
-            <li><b>Multi-tenant.</b> One installation serves several issuers and verifiers, or many customers if you offer it as a service, each with its own keys, roles and configuration.</li>
-            <li><b>Operated in the browser.</b> Your team manages configuration, keys, access and sessions in the web client. The API is for your application and your automation.</li>
-            <li><b>Ready for audits.</b> Session logs, OpenTelemetry, and configuration changes that are planned before they are applied.</li>
+            <li><a href="https://docs.eudiplo.dev/concepts/security-model">Security model</a>Trust boundaries, tokens, keys and encryption.</li>
+            <li><a href="https://docs.eudiplo.dev/cookbooks/production-vm">Production on one VM</a>TLS reverse proxy, restricted ports, backups and health checks.</li>
+            <li><a href="https://docs.eudiplo.dev/showcase">Who uses it</a>Projects and platforms that run EUDIPLO.</li>
+            <li><a href="https://discord.gg/5Q4bgBQABa">Talk to the maintainers ↗</a>The EUDIPLO channel on the LF Decentralized Trust Discord.</li>
           </ul>
-          <div class="links">
-            <a href="https://docs.eudiplo.dev/concepts/security-model">Security model</a>
-            <a href="https://docs.eudiplo.dev/cookbooks/production-vm">Production setup</a>
-            <a href="https://docs.eudiplo.dev/showcase">Who uses it</a>
-            <a href="https://discord.gg/5Q4bgBQABa">Talk to the maintainers ↗</a>
-          </div>
         </div>
       </div>
     </div>
