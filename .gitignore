@@ -2,3 +2,4 @@
 /eudiplo/
 /.wrangler/
 node_modules/
+/.astro/

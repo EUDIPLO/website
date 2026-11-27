@@ -1,30 +1,65 @@
 # eudiplo.dev
 
-Source of [eudiplo.dev](https://eudiplo.dev), the landing page of [EUDIPLO](https://github.com/EUDIPLO/eudiplo). The documentation at [docs.eudiplo.dev](https://docs.eudiplo.dev) lives in the EUDIPLO repository under `apps/docs`.
+Source of [eudiplo.dev](https://eudiplo.dev), the website and blog of [EUDIPLO](https://github.com/EUDIPLO/eudiplo). The documentation at [docs.eudiplo.dev](https://docs.eudiplo.dev) lives in the EUDIPLO repository under `apps/docs`.
 
-The site is a single static page (`index.html`) with self-hosted fonts (`fonts/`, no requests to Google) and no build step beyond copying files. It moved out of `apps/website` in the EUDIPLO repository; its history came along.
+The site is built with [Astro](https://astro.build) as static HTML. Fonts are self-hosted (`public/fonts/`, no requests to Google), and no page loads anything from another origin. It moved out of `apps/website` in the EUDIPLO repository; its history came along.
+
+## Layout
+
+| Path | Content |
+| --- | --- |
+| `src/layouts/Base.astro` | Head, header, navigation and footer of every page. The navigation is the `NAV` list in `src/site.ts`. |
+| `src/pages/` | One file per page: home, `use-cases/`, `self-hosting`, `about`, `blog/` (list, post, tag pages, RSS feed) and `404`. |
+| `src/home/body.html`, `src/scripts/home.js` | The home page. Its markup is plain HTML that is inserted as is, because the code samples contain braces. |
+| `src/content/blog/*.md` | Blog posts. |
+| `src/content/use-cases/*.md` | One use case per file; the front matter fills the cards, the body the detail page. |
+| `src/og.ts`, `src/pages/og/` | Link preview images for blog posts, rendered with the site's fonts by satori and resvg. |
+| `src/styles/site.css`, `src/styles/pages.css` | Design tokens and home page sections; subpages and blog. |
+| `public/` | Files copied as they are: fonts, images, icons, `_headers`, `_redirects`, `robots.txt`. |
+
+### Write a blog post
+
+Add `src/content/blog/<slug>.md`; the file name becomes the URL `/blog/<slug>/`.
+
+```markdown
+---
+title: What 10.1 changes
+description: One or two sentences, at most 200 characters. Shown in the list, the feed and link previews.
+date: 2026-12-01
+tags: [release]
+---
+
+Text in Markdown.
+```
+
+Optional fields: `author` (default "The EUDIPLO maintainers"), `updated` (date) and `draft: true`, which shows the post in `npm run dev` only. `src/content.config.ts` holds the schema; a post that does not match it fails the build. The list, the tag pages, the RSS feed (`/blog/rss.xml`) and the sitemap pick up the post on their own.
+
+Every post also gets a link preview image (1200 × 630) at `/og/blog/<slug>.png`, drawn at build time from its title, description, date and first two tags (`src/og.ts`). Keep the title under about 90 characters so it fits on three lines; the description is cut after two lines.
 
 ## What is published
 
-`npm run build` stages `dist/` from two sources:
+`npm run build` runs `astro build`, which writes the pages and `public/` to `dist/`, and then `scripts/build.mjs`, which adds the files that come from an EUDIPLO checkout:
 
 | Path on eudiplo.dev | Source |
 | --- | --- |
-| `/`, images, fonts, `_headers`, `_redirects`, `404.html` | this repository |
-| `/.well-known/security.txt` | `security.txt` here; the build adds `Expires` (build date + 360 days) and fails if a `Contact` is missing from EUDIPLO's `SECURITY.md` (in production: of the latest release) |
+| Pages, `/blog/rss.xml`, `/sitemap-index.xml`, images, fonts, `_headers`, `_redirects`, `404.html` | this repository |
+| `/.well-known/security.txt` | `security.txt` here; the build adds `Expires` (build date + 360 days) and fails if a `Contact` is missing from `SECURITY.md` of the same EUDIPLO commit as the schemas, so the contacts follow `main` and not the latest release |
 | `/install.sh` | `apps/cli/install.sh` in EUDIPLO: in production always from the latest release, in preview from the deployed commit |
 | `/schemas/v*/…`, `/schemas/index.json` | `schemas/v*/` in EUDIPLO; the build checks every `$id` and cross-schema `$ref` |
 
-The schema URLs are the `$schema` ids of EUDIPLO configuration files, so they must stay stable. `_headers` serves them cross-origin with the JSON Schema content type, and `404.html` keeps unknown versions from falling back to the home page.
+The schema URLs are the `$schema` ids of EUDIPLO configuration files, so they must stay stable. `_headers` serves them cross-origin with the JSON Schema content type, and `404.html` keeps unknown versions from falling back to the home page. No page or file in `public/` may use `/install.sh`, `/.well-known/` or `/schemas/`; the build fails if one does.
 
 ## Local build
 
 ```bash
+npm ci
 git clone --depth 1 https://github.com/EUDIPLO/eudiplo.git eudiplo
 npm run serve
 ```
 
-`EUDIPLO_DIR` points the build at another EUDIPLO checkout, for example `EUDIPLO_DIR=../eudiplo npm run build`. `EUDIPLO_INSTALLER_DIR` takes the installer and `SECURITY.md` from a different checkout, as production does with the latest release.
+`npm run dev` starts Astro's development server with live reload for work on pages and posts; it does not need the EUDIPLO checkout and does not serve the installer, the schemas or `security.txt`. Both scripts turn off Astro's telemetry.
+
+`EUDIPLO_DIR` points the build at another EUDIPLO checkout, for example `EUDIPLO_DIR=../eudiplo npm run build`. `EUDIPLO_INSTALLER_DIR` takes the installer from a different checkout, as production does with the latest release.
 
 ## Deployment
 

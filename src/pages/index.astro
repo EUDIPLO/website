@@ -1,0 +1,45 @@
+---
+import Base from "../layouts/Base.astro";
+// The home page markup is plain HTML (it contains code samples with braces),
+// so it is injected as is instead of being parsed as an Astro template.
+import body from "../home/body.html?raw";
+import { SITE } from "../site";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${SITE.url}/#website`,
+      name: SITE.name,
+      url: `${SITE.url}/`,
+      inLanguage: "en",
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": `${SITE.url}/#software`,
+      name: SITE.name,
+      description:
+        "Self-hosted, open-source middleware for the EU Digital Identity Wallet. It issues and verifies credentials with OpenID4VCI and OpenID4VP, SD-JWT VC and mdoc.",
+      url: `${SITE.url}/`,
+      codeRepository: SITE.github,
+      programmingLanguage: "TypeScript",
+      license: "https://www.apache.org/licenses/LICENSE-2.0",
+      isAccessibleForFree: true,
+      publisher: {
+        "@type": "Organization",
+        name: "LF Decentralized Trust",
+        url: "https://www.lfdecentralizedtrust.org/",
+      },
+      sameAs: [SITE.github],
+    },
+  ],
+};
+---
+
+<Base jsonLd={jsonLd}>
+  <Fragment set:html={body} />
+  <script>
+    import "../scripts/home.js";
+  </script>
+</Base>

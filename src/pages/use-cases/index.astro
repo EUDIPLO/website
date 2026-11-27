@@ -1,0 +1,32 @@
+---
+import { getCollection } from "astro:content";
+import UseCaseCard from "../../components/UseCaseCard.astro";
+import Base from "../../layouts/Base.astro";
+
+const useCases = (await getCollection("use-cases")).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base
+  title="Use cases"
+  description="What teams build with EUDIPLO: age verification, customer onboarding, issuing their own credentials and wallet interoperability testing."
+>
+  <section class="page-head">
+    <div class="wrap">
+      <p class="kicker">Use cases</p>
+      <h1>What teams build with it</h1>
+      <p class="lede">EUDIPLO verifies credentials from the EU Digital Identity Wallet and issues credentials into it. Each use case below starts from a guide in the documentation that ends in a working result.</p>
+    </div>
+  </section>
+  <section class="page-sec">
+    <div class="wrap">
+      <div class="uc-grid">
+        {useCases.map((useCase) => <UseCaseCard useCase={useCase} />)}
+      </div>
+      <div class="next-step">
+        <strong>Something else in mind?</strong>
+        <p>The same two building blocks, a verification request and an issuance configuration, cover other credentials as well. Ask the maintainers on Discord.</p>
+        <a class="btn ghost" href="https://discord.gg/5Q4bgBQABa">Open Discord ↗</a>
+      </div>
+    </div>
+  </section>
+</Base>

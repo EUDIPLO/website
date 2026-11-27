@@ -1,0 +1,51 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import { KIND } from "../../site";
+
+export async function getStaticPaths() {
+  const useCases = (await getCollection("use-cases")).sort((a, b) => a.data.order - b.data.order);
+  return useCases.map((useCase, index) => ({
+    params: { id: useCase.id },
+    props: { useCase, next: useCases[(index + 1) % useCases.length] },
+  }));
+}
+
+const { useCase, next } = Astro.props;
+const { title, headline, description, kind, who, facts, cta } = useCase.data;
+const { Content } = await render(useCase);
+---
+
+<Base title={`${title} · Use cases`} description={description}>
+  <article>
+    <header class="page-head">
+      <div class="narrow">
+        <p class="crumbs"><a href="/use-cases/">Use cases</a><span aria-hidden="true">/</span><span class={`tag ${KIND[kind].className}`}>{KIND[kind].label}</span><span>{who}</span></p>
+        <h1>{headline}</h1>
+        <p class="lede">{description}</p>
+        <dl class="uc-facts">
+          {facts.map((fact) => (
+            <>
+              <dt>{fact.label}</dt>
+              <dd class={fact.chips ? "chips" : undefined}>
+                {fact.chips?.map((chip) => <code>{chip}</code>)}
+                {fact.href && <a href={fact.href}>{fact.linkText}</a>}{fact.href && fact.text ? ", " : ""}{fact.text}
+              </dd>
+            </>
+          ))}
+        </dl>
+      </div>
+    </header>
+    <div class="page-sec">
+      <div class="narrow">
+        <div class="prose"><Content /></div>
+        <div class="next-step">
+          <strong>Try it</strong>
+          <p>The guide takes you to a working result on your own machine.</p>
+          <a class="btn" href={cta.href}>{cta.text} →</a>
+        </div>
+        <p class="post-foot"><a href="/use-cases/">← All use cases</a><a href={`/use-cases/${next.id}/`}>Next: {next.data.title} →</a></p>
+      </div>
+    </div>
+  </article>
+</Base>

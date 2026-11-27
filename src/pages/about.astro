@@ -1,0 +1,75 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../site";
+
+const D = SITE.docs;
+const GH = SITE.github;
+---
+
+<Base
+  title="About and community"
+  description="Who is behind EUDIPLO, how the project is run, and how to get in touch, contribute or report a security issue."
+>
+  <section class="page-head">
+    <div class="wrap">
+      <p class="kicker">About and community</p>
+      <h1>An open project, developed in the open.</h1>
+      <p class="lede">EUDIPLO is open-source middleware for the EU Digital Identity Wallet. It is an LF Decentralized Trust project, licensed under Apache 2.0, and was previously hosted by the OpenWallet Foundation.</p>
+    </div>
+  </section>
+
+  <section class="page-sec" aria-labelledby="project-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">The project</p>
+        <h2 id="project-title">How it is run</h2>
+      </div>
+      <table class="spec-table">
+        <tbody>
+          <tr><th scope="row">Home</th><td><a href="https://www.lfdecentralizedtrust.org/">LF Decentralized Trust</a>. The technical charter and the governance document are in the <a href="https://github.com/EUDIPLO/.github">EUDIPLO organization repository</a>.</td></tr>
+          <tr><th scope="row">Maintainers</th><td>Mirko Mollik (<a href="https://github.com/cre8">@cre8</a>), lead maintainer, and Lukas.J.Han (<a href="https://github.com/lukasjhan">@lukasjhan</a>). The current list is in <a href={`${GH}/blob/main/MAINTAINERS.md`}>MAINTAINERS.md</a>.</td></tr>
+          <tr><th scope="row">License</th><td><a href={`${GH}/blob/main/LICENSE`}>Apache License 2.0</a> for the code. No license fees and no per-transaction pricing.</td></tr>
+          <tr><th scope="row">Versions</th><td>Semantic versioning. Breaking changes come only in major versions, each with an <a href={`${D}/upgrade`}>upgrade guide</a>. Security fixes go into the latest version.</td></tr>
+          <tr><th scope="row">First release</th><td>Version 1.0 in July 2025.</td></tr>
+          <tr><th scope="row">The name and the logo</th><td>Diplo, the diplodocus. The <a href={`${D}/brand`}>brand page</a> has the story, the logo files and the colors.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="page-sec alt" aria-labelledby="community-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">Community</p>
+        <h2 id="community-title">Get in touch</h2>
+      </div>
+      <div class="card-grid">
+        <div class="node"><h3>Discord</h3><p>Questions and discussion in the EUDIPLO channel on the LF Decentralized Trust Discord.</p><p><a href={SITE.discord}>Open Discord ↗</a></p></div>
+        <div class="node"><h3>GitHub issues</h3><p>Bug reports and feature requests.</p><p><a href={`${GH}/issues`}>Open issues ↗</a></p></div>
+        <div class="node"><h3>Community call</h3><p>Every other Thursday. The README has the link and the dates.</p><p><a href={`${GH}#readme`}>README ↗</a></p></div>
+        <div class="node"><h3>Blog</h3><p>Releases, guides and notes from the project.</p><p><a href="/blog/">Read the blog →</a></p></div>
+        <div class="node"><h3>Who uses it</h3><p>Projects and platforms that run EUDIPLO. Yours can be added.</p><p><a href={`${D}/showcase`}>Showcase →</a></p></div>
+        <div class="node"><h3>Code of conduct</h3><p>The LF Decentralized Trust Code of Conduct applies in all project spaces.</p><p><a href={`${GH}/blob/main/CODE_OF_CONDUCT.md`}>Code of conduct ↗</a></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-sec" aria-labelledby="contribute-title">
+    <div class="wrap">
+      <div class="card-grid two" style="margin-top:0">
+        <div class="node">
+          <p class="kicker">Contribute</p>
+          <h3 id="contribute-title" style="margin-top:10px">Changes are welcome</h3>
+          <p>Pull requests go against <code>main</code>. Commits follow Conventional Commits, carry a DCO sign-off (<code>git commit -s</code>) and are cryptographically signed. Pull requests run the unit and end-to-end tests and the OpenID Foundation conformance suite.</p>
+          <p><a href={`${GH}/blob/main/CONTRIBUTING.MD`}>Contributing guide ↗</a> · <a href={`${D}/contributing`}>Contributor docs →</a></p>
+        </div>
+        <div class="node">
+          <p class="kicker">Security</p>
+          <h3 style="margin-top:10px">Report a vulnerability</h3>
+          <p>Please report security issues in private, through a GitHub security advisory or by email, and not in a public issue. The security policy names the contacts and the response times.</p>
+          <p><a href={`${GH}/security/policy`}>Security policy ↗</a> · <a href="/.well-known/security.txt">security.txt</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
