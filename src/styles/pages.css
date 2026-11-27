@@ -106,8 +106,12 @@
 .proofbar .hosted { padding-block: 22px; }
 .proofbar .hosted .lfdt { height: 18px; }
 .proofbar .hosted .lf { height: 36px; }
-.foot-hosted { margin-top: 44px; padding-top: 24px; border-top: 1px solid var(--line); }
-.foot-hosted + .mrz { margin-top: 24px; }
+/* Footer base: the hosts on the left, the MRZ strip on the right; they stack when the row gets too narrow. */
+.foot-base {
+  margin-top: 44px; padding-block: 24px 28px; border-top: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 40px;
+}
+.foot-base .mrz { margin: 0; padding: 0; border: 0; flex: none; max-width: 100%; font-size: clamp(8px, 2.2vw, 13px); }
 @media (max-width: 480px) {
   .hosted .lfdt, .proofbar .hosted .lfdt { height: 13px; }
   .hosted .lf, .proofbar .hosted .lf { height: 28px; }
