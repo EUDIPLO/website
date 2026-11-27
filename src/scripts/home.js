@@ -96,7 +96,8 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
   drawGuilloche();
   if ('ResizeObserver' in window) new ResizeObserver(drawGuilloche).observe(canvas);
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawGuilloche);
-  document.fonts && document.fonts.ready.then(drawGuilloche);
+  // Redraw once the fonts are in; a failed font load leaves the first drawing.
+  document.fonts?.ready.then(drawGuilloche).catch(() => {});
 
   /* ---------- Wallet flow stage ---------- */
   function qr(seed) {
