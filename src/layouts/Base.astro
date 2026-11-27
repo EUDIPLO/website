@@ -11,6 +11,8 @@ interface Props {
   ogType?: "website" | "article";
   jsonLd?: object;
   noindex?: boolean;
+  // Link preview image; the default is the logo card.
+  image?: { path: string; width: number; height: number; alt: string };
 }
 
 const {
@@ -19,13 +21,18 @@ const {
   ogType = "website",
   jsonLd,
   noindex = false,
+  image: pageImage,
 } = Astro.props;
 const fullTitle = title ? `${title} · ${SITE.name}` : SITE.title;
 const path = Astro.url.pathname;
 const canonical = new URL(path, SITE.url).href;
-const image = `${SITE.url}/eudiplo.png`;
-const imageAlt =
-  "The EUDIPLO logo: Diplo the diplodocus on a navy badge with a yellow sun.";
+const { path: imagePath, width: imageWidth, height: imageHeight, alt: imageAlt } = pageImage ?? {
+  path: "/eudiplo.png",
+  width: 1280,
+  height: 640,
+  alt: "The EUDIPLO logo: Diplo the diplodocus on a navy badge with a yellow sun.",
+};
+const image = new URL(imagePath, SITE.url).href;
 // Top-level section of a link, so /blog/first-post/ marks "Blog" as current.
 const isCurrent = (href: string) =>
   href.startsWith("/") && !href.includes("#") && path.startsWith(href);
@@ -60,8 +67,8 @@ const isCurrent = (href: string) =>
     <meta property="og:description" content={description} />
     <meta property="og:image" content={image} />
     <meta property="og:image:type" content="image/png" />
-    <meta property="og:image:width" content="1280" />
-    <meta property="og:image:height" content="640" />
+    <meta property="og:image:width" content={String(imageWidth)} />
+    <meta property="og:image:height" content={String(imageHeight)} />
     <meta property="og:image:alt" content={imageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />

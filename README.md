@@ -13,6 +13,7 @@ The site is built with [Astro](https://astro.build) as static HTML. Fonts are se
 | `src/home/body.html`, `src/scripts/home.js` | The home page. Its markup is plain HTML that is inserted as is, because the code samples contain braces. |
 | `src/content/blog/*.md` | Blog posts. |
 | `src/content/use-cases/*.md` | One use case per file; the front matter fills the cards, the body the detail page. |
+| `src/og.ts`, `src/pages/og/` | Link preview images for blog posts, rendered with the site's fonts by satori and resvg. |
 | `src/styles/site.css`, `src/styles/pages.css` | Design tokens and home page sections; subpages and blog. |
 | `public/` | Files copied as they are: fonts, images, icons, `_headers`, `_redirects`, `robots.txt`. |
 
@@ -32,6 +33,8 @@ Text in Markdown.
 ```
 
 Optional fields: `author` (default "The EUDIPLO maintainers"), `updated` (date) and `draft: true`, which shows the post in `npm run dev` only. `src/content.config.ts` holds the schema; a post that does not match it fails the build. The list, the tag pages, the RSS feed (`/blog/rss.xml`) and the sitemap pick up the post on their own.
+
+Every post also gets a link preview image (1200 × 630) at `/og/blog/<slug>.png`, drawn at build time from its title, description, date and first two tags (`src/og.ts`). Keep the title under about 90 characters so it fits on three lines; the description is cut after two lines.
 
 ## What is published
 
