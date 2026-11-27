@@ -1,5 +1,5 @@
   <section class="hero" aria-labelledby="hero-title">
-    <canvas class="guilloche" id="guilloche" aria-hidden="true"></canvas>
+    <canvas class="guilloche" id="guilloche" role="presentation"></canvas>
     <div class="wrap">
       <div>
         <p class="kicker"><span class="dot" aria-hidden="true"></span>Open source · Self-hosted · No SaaS</p>
@@ -13,11 +13,11 @@
 
       <div class="stage" id="stage" aria-label="Example wallet flow">
         <div class="stage-top">
-          <div class="tabs" role="group" aria-label="Choose an example">
+          <fieldset class="tabs" aria-label="Choose an example">
             <button type="button" data-scenario="age" aria-pressed="true">Age check</button>
             <button type="button" data-scenario="bank" aria-pressed="false">Account opening</button>
             <button type="button" data-scenario="staff" aria-pressed="false">Employee ID</button>
-          </div>
+          </fieldset>
           <button type="button" class="playpause" id="playpause" aria-label="Pause the animation"></button>
         </div>
         <div class="devices">
@@ -64,10 +64,10 @@
         <p data-only="verify">This is the complete backend side of the age check above, with the TypeScript SDK or plain HTTP from any language. Everything below the waterline is what EUDIPLO did to answer it.</p>
         <p data-only="issue" hidden>This is the complete backend side of the employee ID above, with the TypeScript SDK or plain HTTP from any language. Everything below the waterline is what EUDIPLO did to deliver it.</p>
       </div>
-      <div class="tabs flow-switch" role="group" aria-label="Choose a flow">
+      <fieldset class="tabs flow-switch" aria-label="Choose a flow">
         <button type="button" data-flow="verify" aria-pressed="true">Verify a credential</button>
         <button type="button" data-flow="issue" aria-pressed="false">Issue a credential</button>
-      </div>
+      </fieldset>
       <div class="code-pair">
         <figure class="code" id="code-main" aria-label="Backend code for the age check">
           <div class="code-head">
@@ -180,10 +180,10 @@ TOKEN=$(<span class="tf">curl</span> -s -X POST https://eudiplo.example.com/api/
             <h3>steps EUDIPLO ran for that one call</h3>
             <p>You don't build them, test them against the conformance suite, or rewrite them when the specs move.</p>
           </div>
-          <div class="tabs" role="group" aria-label="Choose a flow">
+          <fieldset class="tabs" aria-label="Choose a flow">
             <button type="button" data-flow="verify" aria-pressed="true">Verify</button>
             <button type="button" data-flow="issue" aria-pressed="false">Issue</button>
-          </div>
+          </fieldset>
         </div>
         <div class="phases" data-only="verify">
           <details class="phase">

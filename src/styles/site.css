@@ -247,7 +247,8 @@ h1 em { font-style: normal; color: var(--brand); }
   padding: 14px; box-shadow: var(--shadow);
 }
 .stage-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
-.tabs { display: flex; gap: 3px; padding: 3px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; flex-wrap: wrap; }
+/* A fieldset: margin and min-inline-size undo its browser defaults. */
+.tabs { display: flex; gap: 3px; margin: 0; min-inline-size: 0; padding: 3px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; flex-wrap: wrap; }
 .tabs button {
   appearance: none; border: 0; background: transparent; cursor: pointer;
   font: 700 13.5px/1 var(--body); color: var(--ink-soft);

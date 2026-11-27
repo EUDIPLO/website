@@ -65,7 +65,9 @@ export interface OgCard {
 
 export async function renderOgImage(card: OgCard): Promise<Buffer> {
   const { fonts, logo } = await loadAssets();
-  const titleSize = card.title.length <= 34 ? 80 : card.title.length <= 64 ? 66 : 54;
+  let titleSize = 54;
+  if (card.title.length <= 34) titleSize = 80;
+  else if (card.title.length <= 64) titleSize = 66;
   const mono = { fontFamily: "Mono", fontSize: 20, letterSpacing: 1.6, textTransform: "uppercase" };
 
   const tree = el(

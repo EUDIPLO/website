@@ -66,7 +66,7 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
     ctx.clearRect(0, 0, w, h);
     const css = getComputedStyle(document.documentElement);
     const rgb = css.getPropertyValue('--guilloche-rgb').trim();
-    const alpha = parseFloat(css.getPropertyValue('--guilloche-a')) || 0.14;
+    const alpha = Number.parseFloat(css.getPropertyValue('--guilloche-a')) || 0.14;
     const wide = w > 1080;
     const cx = wide ? w * 0.73 : w * 0.62;
     const cy = wide ? h * 0.5 : h * 0.86;
@@ -96,14 +96,17 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
   drawGuilloche();
   if ('ResizeObserver' in window) new ResizeObserver(drawGuilloche).observe(canvas);
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawGuilloche);
-  // Redraw once the fonts are in; a failed font load leaves the first drawing.
-  document.fonts?.ready.then(drawGuilloche).catch(() => {});
+  // Redraw once the fonts are in.
+  document.fonts?.addEventListener('loadingdone', drawGuilloche);
 
   /* ---------- Wallet flow stage ---------- */
   function qr(seed) {
     const n = 25;
     let s = seed;
-    const rnd = () => ((s = (s * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+    const rnd = () => {
+      s = (s * 1103515245 + 12345) & 0x7fffffff;
+      return s / 0x7fffffff;
+    };
     const inFinder = (x, y) => (x < 8 && y < 8) || (x > n - 9 && y < 8) || (x < 8 && y > n - 9);
     let cells = '';
     for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
@@ -114,7 +117,11 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
   }
 
   const bankFields = [['Given name', 'Lena'], ['Family name', 'Fischer'], ['Date of birth', '14 Mar 1991'], ['Address', 'Lindenstraße 12, Berlin']];
-  const bankForm = (filled) => `<div class="b-form${filled ? '' : ' wide-only'}">${bankFields.map(([l, v]) => `<div class="f${filled ? ' filled' : ''}"><small>${l}</small><span>${filled ? v : '&nbsp;'}</span></div>`).join('')}</div>`;
+  const bankField = (filled, [l, v]) => `<div class="f${filled ? ' filled' : ''}"><small>${l}</small><span>${filled ? v : '&nbsp;'}</span></div>`;
+  const bankForm = (filled) => {
+    const fields = bankFields.map((field) => bankField(filled, field)).join('');
+    return `<div class="b-form${filled ? '' : ' wide-only'}">${fields}</div>`;
+  };
   const cartLines = `<ul class="b-lines wide-only"><li><span>Riesling Kabinett 2024</span><span>€14.90</span></li><li><span>Spätburgunder 2023</span><span>€19.50</span></li></ul>`;
 
   const SCENARIOS = {
@@ -168,7 +175,7 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
   const staffCard = (isNew) => `<div class="cred staff${isNew ? ' is-new' : ''}"><div class="cred-top"><b>Employee ID</b>${isNew ? '<span class="new">New</span>' : '<span>SD-JWT VC</span>'}</div><div class="cred-bottom"><span>Lena Fischer</span><span>Platform Engineering · until 09/2029</span></div></div>`;
 
   function browserView(S, step) {
-    const state = step === 0 ? 'ask' : step === 3 ? 'done' : 'wait';
+    const state = ['ask', 'wait', 'wait', 'done'][step];
     let panel;
     if (state === 'ask') {
       panel = `<div class="b-panel">${qr(S.seed)}<div><strong>${S.ask[0]}</strong><p>${S.ask[1]}</p></div></div>`;
@@ -224,7 +231,7 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
     const view = $('p-view');
     view.innerHTML = phoneView(S, step);
     view.style.animation = 'none';
-    void view.offsetWidth;
+    view.getBoundingClientRect(); // force a reflow so the animation restarts
     view.style.animation = '';
     $('hood-text').textContent = S.hood[step];
     tabButtons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.scenario === scenario)));
