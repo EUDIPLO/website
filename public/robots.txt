@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://eudiplo.dev/sitemap-index.xml

@@ -1,0 +1,143 @@
+---
+import Base from "../layouts/Base.astro";
+
+const D = "https://docs.eudiplo.dev";
+---
+
+<Base
+  title="Self-hosting and privacy"
+  description="EUDIPLO is software you run, not a service you rent: where personal data goes, how long it is kept, where keys live and what leaves your servers."
+>
+  <section class="page-head">
+    <div class="wrap">
+      <p class="kicker">Self-hosting and privacy</p>
+      <h1>Your servers. Your keys. Your users' data.</h1>
+      <p class="lede">EUDIPLO is software you run, not a service you rent. This page describes where personal data goes, how long it is kept, where your keys live and what leaves your servers. Each answer links to the documentation that backs it.</p>
+    </div>
+  </section>
+
+  <section class="page-sec">
+    <div class="wrap">
+      <div class="paths">
+        <div class="path">
+          <span class="label">A closed identity platform</span>
+          <div class="route">
+            <span class="hop">Wallet<small>on the user's phone</small></span>
+            <span class="to" aria-hidden="true">→</span>
+            <span class="hop third">Vendor's cloud<small>decrypts every answer, usually holds your keys</small></span>
+            <span class="to" aria-hidden="true">→</span>
+            <span class="hop">Your backend</span>
+          </div>
+        </div>
+        <div class="path ours">
+          <span class="label">EUDIPLO</span>
+          <div class="route">
+            <span class="hop">Wallet<small>on the user's phone</small></span>
+            <span class="to" aria-hidden="true">→</span>
+            <div class="boundary">
+              <span class="tag-line">Your infrastructure</span>
+              <span class="hop core">EUDIPLO<small>decrypts the answer on your server</small></span>
+              <span class="to" aria-hidden="true">→</span>
+              <span class="hop">Your backend</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-sec alt" aria-labelledby="data-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">Personal data</p>
+        <h2 id="data-title">What is stored, and for how long</h2>
+        <p>EUDIPLO keeps a session for each issuance or verification, so your backend can fetch the result.</p>
+      </div>
+      <table class="spec-table">
+        <tbody>
+          <tr><th scope="row">In transit</th><td>The wallet encrypts its answer to a key pair that your instance creates for that one session. Only your instance can decrypt it.</td></tr>
+          <tr><th scope="row">In the database</th><td>Session data, private keys held in the database and configuration secrets are encrypted with AES-256-GCM. Client secrets are stored as bcrypt hashes. <a href={`${D}/operate/encryption-keys`}>Encryption keys</a></td></tr>
+          <tr><th scope="row">Retention</th><td>Sessions are removed after <code>SESSION_TTL</code>, 24 hours by default. Each tenant can set its own period, down to 60 seconds.</td></tr>
+          <tr><th scope="row">Delete or anonymize</th><td><code>SESSION_CLEANUP_MODE=full</code> (the default) deletes the session. <code>anonymize</code> keeps it for your statistics and clears the credentials. A reference you attached to the session and a cancel reason stay readable, so do not put personal data there. <a href={`${D}/concepts/sessions#session-cleanup`}>Session cleanup</a></td></tr>
+          <tr><th scope="row">Audit log</th><td>Records who changed which configuration and when. It is kept until you set a retention limit. <a href={`${D}/operate/logging#audit-log`}>Audit log</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="page-sec" aria-labelledby="keys-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">Keys</p>
+        <h2 id="keys-title">Signing keys stay where you put them</h2>
+        <p>Each key chain names the provider that holds its private key.</p>
+      </div>
+      <div class="card-grid">
+        <div class="node"><h3>Database</h3><p>The default. Private keys are stored encrypted; the encryption key comes from your environment, HashiCorp Vault, AWS or Azure.</p></div>
+        <div class="node"><h3>HashiCorp Vault</h3><p>Keys in the Transit engine. EUDIPLO sends data to sign and receives the signature.</p></div>
+        <div class="node"><h3>AWS KMS</h3><p>Keys are created inside KMS. They cannot be imported from outside or exported.</p></div>
+        <div class="node"><h3>HSM over PKCS#11</h3><p>Keys are created inside the hardware module and every signature happens there.</p></div>
+        <div class="node"><h3>Remote signing</h3><p>A signing service you reach over HTTP, or one that speaks the Cloud Signature Consortium API.</p></div>
+        <div class="node"><h3>Details</h3><p>Which provider supports which algorithm and operation is listed in the documentation.</p><p><a href={`${D}/operate/kms`}>Key management →</a></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-sec alt" aria-labelledby="out-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">Outbound connections</p>
+        <h2 id="out-title">What leaves your servers</h2>
+        <p>EUDIPLO has no analytics, license checks or update checks. It connects only to what you configure.</p>
+      </div>
+      <table class="spec-table">
+        <tbody>
+          <tr><th scope="row">Trust and status lists</th><td>EUDIPLO fetches the trust lists you name and the status lists that presented credentials point to, to check issuers and revocation.</td></tr>
+          <tr><th scope="row">Your webhooks</th><td>Results and claim requests go to the endpoints you set.</td></tr>
+          <tr><th scope="row">Registrar</th><td>Only if you request access or registration certificates from a registrar, such as the German EUDI Hub.</td></tr>
+          <tr><th scope="row">Traces and metrics</th><td>OpenTelemetry export is on by default and goes to a collector at <code>http://localhost:4318</code>, that is, one you run. Set <code>OTEL_EXPORTER_OTLP_ENDPOINT</code> to move it or <code>OTEL_SDK_DISABLED=true</code> to turn it off. <a href={`${D}/operate/monitoring`}>Monitoring</a></td></tr>
+        </tbody>
+      </table>
+      <p class="privacy-more"><a class="more" href={`${D}/concepts/security-model`}>Read the security model →</a></p>
+    </div>
+  </section>
+
+  <section class="page-sec" aria-labelledby="run-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">Deployment</p>
+        <h2 id="run-title">What you run</h2>
+        <p>One backend container, plus the web client if you want it. A database, object storage and an external key store are optional.</p>
+      </div>
+      <div class="card-grid">
+        <div class="node"><h3>Containers</h3><p><code>ghcr.io/eudiplo/eudiplo</code> and <code>ghcr.io/eudiplo/eudiplo-client</code>. Run them with the CLI, with Docker Compose or on Kubernetes with Kustomize.</p><p><a href={`${D}/operate`}>Operate →</a></p></div>
+        <div class="node"><h3>Database</h3><p>SQLite to start, PostgreSQL for production and for more than one replica.</p><p><a href={`${D}/operate/database`}>Database →</a></p></div>
+        <div class="node"><h3>Sign-in</h3><p>Built-in API clients with roles, or single sign-on through Keycloak or another OpenID Connect provider.</p><p><a href={`${D}/operate/tenants-and-access`}>Tenants and access →</a></p></div>
+        <div class="node"><h3>Configuration as code</h3><p>Keep each tenant's configuration as files, review a plan of the changes and import it.</p><p><a href={`${D}/operate/configuration-as-code`}>Configuration as code →</a></p></div>
+        <div class="node"><h3>One VM</h3><p>A cookbook for a single server with TLS, restricted ports, backups and health checks.</p><p><a href={`${D}/cookbooks/production-vm`}>Production on one VM →</a></p></div>
+        <div class="node"><h3>Before go-live</h3><p>A checklist of the settings that matter once real credentials are involved.</p><p><a href={`${D}/operate/production-checklist`}>Production checklist →</a></p></div>
+      </div>
+
+      <div class="provider">
+        <div>
+          <p class="kicker">For service providers</p>
+          <h3>Offer it as a service, with the same privacy for every customer.</h3>
+          <p>EUDIPLO is multi-tenant: hosting companies, identity providers and public IT service centers can run one installation for many customers. Each tenant has its own keys, certificates, trust lists, configurations, API clients, sessions and retention period. Every record carries its tenant, and an access token is valid for one tenant only.</p>
+          <a class="more" href={`${D}/operate/tenants-and-access`}>Tenants and access →</a>
+        </div>
+        <div class="install">
+          <span class="tag-line">One EUDIPLO installation</span>
+          <div class="tenant"><b>shop.example</b><span>own keys · own trust list · deleted after 1 h</span></div>
+          <div class="tenant"><b>bank.example</b><span>own keys · HSM · deleted after 24 h</span></div>
+          <div class="tenant"><b>city.example</b><span>own keys · own trust list · anonymized after 7 days</span></div>
+        </div>
+      </div>
+
+      <div class="next-step">
+        <strong>Open source, Apache-2.0</strong>
+        <p>No license fees, no per-transaction pricing. Every statement on this page can be checked in the code.</p>
+        <a class="btn ghost" href="https://github.com/EUDIPLO/eudiplo">View on GitHub ↗</a>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,30 @@
+---
+import PostCard from "../../components/PostCard.astro";
+import Base from "../../layouts/Base.astro";
+import { getPosts } from "../../posts";
+
+const posts = await getPosts();
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
+---
+
+<Base
+  title="Blog"
+  description="News from the EUDIPLO project: releases, guides and notes on building for the EU Digital Identity Wallet."
+>
+  <section class="page-head">
+    <div class="wrap">
+      <p class="kicker">Blog</p>
+      <h1>News from the project</h1>
+      <p class="lede">Releases, guides and notes on building for the EU Digital Identity Wallet.</p>
+    </div>
+  </section>
+  <section class="page-sec">
+    <div class="narrow">
+      <div class="blog-tools">
+        {tags.map((tag) => <a class="tag" href={`/blog/tags/${tag}/`}>{tag}</a>)}
+        <a class="feed" href="/blog/rss.xml">RSS feed</a>
+      </div>
+      {posts.length === 0 ? <p>No posts yet.</p> : <ul class="post-list">{posts.map((post) => <PostCard post={post} />)}</ul>}
+    </div>
+  </section>
+</Base>

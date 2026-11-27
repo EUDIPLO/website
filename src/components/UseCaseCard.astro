@@ -1,0 +1,28 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { KIND } from "../site";
+
+interface Props {
+  useCase: CollectionEntry<"use-cases">;
+}
+const { useCase } = Astro.props;
+const { title, kind, who, summary, facts } = useCase.data;
+---
+
+<article class="uc">
+  <div class="uc-top"><span class={`tag ${KIND[kind].className}`}>{KIND[kind].label}</span><span class="who">{who}</span></div>
+  <h3><a href={`/use-cases/${useCase.id}/`}>{title}</a></h3>
+  <p>{summary}</p>
+  <dl>
+    {facts.map((fact) => (
+      <>
+        <dt>{fact.label}</dt>
+        <dd class={fact.chips ? "chips" : undefined}>
+          {fact.chips?.map((chip) => <code>{chip}</code>)}
+          {fact.href && <a href={fact.href}>{fact.linkText}</a>}{fact.href && fact.text ? ", " : ""}{fact.text}
+        </dd>
+      </>
+    ))}
+  </dl>
+  <a class="more" href={`/use-cases/${useCase.id}/`}>Read more →</a>
+</article>

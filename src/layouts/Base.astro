@@ -1,0 +1,150 @@
+---
+import "../styles/site.css";
+import "../styles/pages.css";
+import sprite from "../components/sprite.html?raw";
+import { NAV, SITE } from "../site";
+
+interface Props {
+  // Page title without the site name; omit on the home page.
+  title?: string;
+  description?: string;
+  ogType?: "website" | "article";
+  jsonLd?: object;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = SITE.description,
+  ogType = "website",
+  jsonLd,
+  noindex = false,
+} = Astro.props;
+const fullTitle = title ? `${title} · ${SITE.name}` : SITE.title;
+const path = Astro.url.pathname;
+const canonical = new URL(path, SITE.url).href;
+const image = `${SITE.url}/eudiplo.png`;
+const imageAlt =
+  "The EUDIPLO logo: Diplo the diplodocus on a navy badge with a yellow sun.";
+// Top-level section of a link, so /blog/first-post/ marks "Blog" as current.
+const isCurrent = (href: string) =>
+  href.startsWith("/") && !href.includes("#") && path.startsWith(href);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#eef3fa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#070f24" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preload" href="/fonts/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/atkinson-hyperlegible-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="alternate" type="application/rss+xml" title="EUDIPLO blog" href="/blog/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="640" />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+    {jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd).replaceAll("<", "\\u003c")} />}
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <Fragment set:html={sprite} />
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href="/" aria-label="EUDIPLO home"><svg class="mark" viewBox="0 0 176 176" aria-hidden="true" focusable="false"><use href="#diplo"></use></svg>EUDIPLO</a>
+        <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Menu"><i aria-hidden="true"></i><span class="menu-label">Menu</span></button>
+        <nav class="primary-nav" id="primary-nav" aria-label="Main">
+          {NAV.map(({ href, label }) => (
+            <a href={href} aria-current={isCurrent(href) ? "page" : undefined}>{label}</a>
+          ))}
+        </nav>
+        <a class="btn" href="/#start">Get started</a>
+      </div>
+    </header>
+
+    <main id="content">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <div class="foot-grid">
+          <div>
+            <a class="brand" href="/"><svg class="mark" viewBox="0 0 176 176" aria-hidden="true" focusable="false"><use href="#diplo"></use></svg>EUDIPLO</a>
+            <p>Open-source middleware for the EU Digital Identity Wallet. An LF Decentralized Trust project.</p>
+          </div>
+          <div>
+            <h4>Website</h4>
+            <ul>
+              <li><a href="/use-cases/">Use cases</a></li>
+              <li><a href="/self-hosting/">Self-hosting and privacy</a></li>
+              <li><a href="/blog/">Blog</a></li>
+              <li><a href="/about/">About and community</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Docs</h4>
+            <ul>
+              <li><a href="https://docs.eudiplo.dev/cookbooks">Cookbooks</a></li>
+              <li><a href="https://docs.eudiplo.dev/reference/api">API reference</a></li>
+              <li><a href="https://docs.eudiplo.dev/reference/protocols">Supported protocols</a></li>
+              <li><a href="https://docs.eudiplo.dev/upgrade">Upgrade guides</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Community</h4>
+            <ul>
+              <li><a href={SITE.github}>GitHub</a></li>
+              <li><a href={SITE.discord}>Discord</a></li>
+              <li><a href="https://github.com/EUDIPLO/eudiplo/blob/main/CONTRIBUTING.MD">Contributing</a></li>
+              <li><a href="/blog/rss.xml">Blog feed (RSS)</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Project</h4>
+            <ul>
+              <li><a href="https://docs.eudiplo.dev/showcase">Who uses EUDIPLO</a></li>
+              <li><a href="https://docs.eudiplo.dev/brand">Logo and colors</a></li>
+              <li><a href="/schemas/index.json">Configuration schemas</a></li>
+              <li><a href="https://github.com/EUDIPLO/eudiplo/blob/main/LICENSE">License (Apache-2.0)</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="hosted foot-hosted">
+          <span class="hosted-label">Hosted by</span>
+          <a href="https://www.lfdecentralizedtrust.org/"><img class="lfdt" src="/img/lfdt.svg" width="286" height="16" alt="LF Decentralized Trust" /></a>
+          <a href="https://www.linuxfoundation.org/"><img class="lf" src="/img/linux-foundation.svg" width="96" height="32" alt="The Linux Foundation" /></a>
+        </div>
+        <div class="mrz" id="mrz" aria-hidden="true"></div>
+      </div>
+    </footer>
+    <script>
+      import "../scripts/site.js";
+    </script>
+  </body>
+</html>

@@ -2,14 +2,21 @@
     "name": "eudiplo-website",
     "version": "0.0.0",
     "private": true,
-    "description": "eudiplo.dev: the EUDIPLO landing page, CLI installer and published configuration schemas",
+    "type": "module",
+    "description": "eudiplo.dev: the EUDIPLO website and blog, CLI installer and published configuration schemas",
     "license": "Apache-2.0",
     "scripts": {
-        "build": "node scripts/build.mjs",
+        "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
+        "build": "ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/build.mjs",
         "serve": "npm run build && python3 -m http.server 3000 --directory dist",
         "deploy": "npm run build && npx --yes wrangler@4.154.0 pages deploy dist --project-name eudiplo-website --branch \"${CLOUDFLARE_PAGES_BRANCH:-preview}\" --commit-dirty=true"
     },
     "engines": {
-        "node": ">=20.0"
+        "node": ">=22.12"
+    },
+    "devDependencies": {
+        "@astrojs/rss": "4.0.19",
+        "@astrojs/sitemap": "3.7.6",
+        "astro": "7.4.13"
     }
 }

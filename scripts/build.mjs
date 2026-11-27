@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-// Stages eudiplo.dev in dist/: the landing page from this repository plus the
-// CLI installer, the published configuration schemas and the security contacts
-// from an EUDIPLO checkout. EUDIPLO_DIR points at that checkout (default:
-// ./eudiplo); EUDIPLO_INSTALLER_DIR, if set, is the checkout the installer and
-// SECURITY.md come from. The deploy workflow takes the schemas from the
-// dispatched EUDIPLO commit or the head of main, and for production the
-// installer from the latest EUDIPLO release. The schema id and $ref checks repeat
+// Completes eudiplo.dev in dist/ after `astro build`: adds the CLI installer,
+// the published configuration schemas and security.txt (checked against the
+// security contacts) from an EUDIPLO checkout. EUDIPLO_DIR points at that
+// checkout (default: ./eudiplo); EUDIPLO_INSTALLER_DIR, if set, is the checkout
+// the installer comes from. The deploy workflow takes the schemas and
+// SECURITY.md from the dispatched EUDIPLO commit or the head of main, and for
+// production the installer from the latest EUDIPLO release. The schema id and $ref checks repeat
 // scripts/check-schema-ids.mjs in EUDIPLO; change both together.
 import {
   cpSync,
@@ -13,7 +13,6 @@ import {
   mkdirSync,
   readdirSync,
   readFileSync,
-  rmSync,
   writeFileSync,
 } from "node:fs";
 import { resolve } from "node:path";
@@ -63,25 +62,15 @@ function checkRefs(value, base) {
   Object.values(value).forEach((item) => checkRefs(item, base));
 }
 for (const [url, { schema }] of schemas) checkRefs(schema, url);
-// Stage only deployable assets; repository/package files are never published.
-rmSync(output, { recursive: true, force: true });
-mkdirSync(output, { recursive: true });
-for (const file of [
-  "index.html",
-  "logo.svg",
-  "eudiplo.png",
-  "favicon-32.png",
-  "icon-192.png",
-  "apple-touch-icon.png",
-  "fonts",
-  "img",
-  "_headers",
-  "_redirects",
-  "404.html",
-]) {
-  if (!existsSync(resolve(website, file)))
-    throw new Error(`Missing website asset: ${file}`);
-  cpSync(resolve(website, file), resolve(output, file), { recursive: true });
+// Astro has built the pages and copied public/ into dist/ (`npm run build`
+// runs it first). This script adds what comes from the EUDIPLO checkout.
+for (const file of ["index.html", "404.html", "_headers", "_redirects"]) {
+  if (!existsSync(resolve(output, file)))
+    throw new Error(`Missing ${file} in dist: run "npm run build", not this script alone`);
+}
+for (const reserved of ["install.sh", ".well-known", "schemas"]) {
+  if (existsSync(resolve(output, reserved)))
+    throw new Error(`dist/${reserved} already exists: a page or a file in public/ must not use that path`);
 }
 cpSync(installer, resolve(output, "install.sh"));
 // RFC 9116 security.txt: Expires is set at build time, less than a year ahead,
@@ -89,7 +78,9 @@ cpSync(installer, resolve(output, "install.sh"));
 const securityTxt = readFileSync(resolve(website, "security.txt"), "utf8");
 if (!/^contact:/im.test(securityTxt) || /^expires:/im.test(securityTxt))
   throw new Error("security.txt needs a Contact and no fixed Expires field");
-const securityPolicy = readFileSync(resolve(installerSource, "SECURITY.md"), "utf8");
+// The contacts follow the security policy on EUDIPLO main, not the one of the
+// latest release: a changed address applies from the day it is merged.
+const securityPolicy = readFileSync(resolve(eudiplo, "SECURITY.md"), "utf8");
 for (const [, contact] of securityTxt.matchAll(/^contact:\s*(\S+)/gim))
   if (!securityPolicy.includes(contact))
     throw new Error(`security.txt Contact not in SECURITY.md: ${contact}`);
