@@ -98,8 +98,9 @@
     --brand: #bec2ff;
     --brand-soft: #1b2160;
     --brand-on: #00006e;
-    --deep: #030918;
-    --deep-line: rgba(255, 255, 255, 0.1);
+    /* A saturated navy, not near-black: it has to stand apart from --paper so the waterline and the deep panels stay visible. */
+    --deep: #0b1d57;
+    --deep-line: rgba(255, 255, 255, 0.12);
     --signal-soft: #502400;
     --signal-text: #ffb787;
     --ok: #43d39b;
@@ -262,9 +263,9 @@ h1 em { font-style: normal; color: var(--brand); }
 }
 .playpause svg { width: 10px; height: 10px; fill: currentColor; }
 
-.devices { position: relative; height: min(72cqw, 470px); }
+.devices { position: relative; height: min(78cqw, 500px); }
 .browser {
-  position: absolute; left: 0; top: 0; width: 77%; height: 80%;
+  position: absolute; left: 0; top: 0; width: 77%; height: 70%;
   background: var(--surface); border: 1px solid var(--line-strong); border-radius: 12px;
   overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow);
   font-size: clamp(11px, 2.4cqw, 13.5px);
@@ -278,7 +279,8 @@ h1 em { font-style: normal; color: var(--brand); }
   font: 500 0.82em/1.2 var(--mono); color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .b-url svg { width: 9px; height: 11px; flex: none; fill: var(--ok); }
-.b-body { flex: 1; min-height: 0; padding: 1.15em 1.25em; display: flex; flex-direction: column; gap: 0.85em; overflow: hidden; }
+/* The right padding keeps the content clear of the phone, which overlaps the browser's last 18%. */
+.b-body { flex: 1; min-height: 0; padding: 1.15em calc(19% + 0.75em) 1.15em 1.25em; display: flex; flex-direction: column; gap: 0.75em; overflow: hidden; }
 .b-title { font: 720 1.4em/1.1 var(--display); letter-spacing: -0.01em; }
 .b-sub { color: var(--ink-soft); }
 .b-lines { list-style: none; margin: 0; padding: 0; }
@@ -297,7 +299,7 @@ h1 em { font-style: normal; color: var(--brand); }
 .b-panel p { color: var(--ink-soft); font-size: 0.92em; line-height: 1.4; margin-top: 2px; }
 .b-panel.ok { border: 1px solid transparent; background: var(--ok-soft); }
 .b-panel.ok strong { color: var(--ok); }
-.qr { width: clamp(64px, 16cqw, 92px); flex: none; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); }
+.qr { width: clamp(64px, 13cqw, 84px); flex: none; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); }
 .qr svg { display: block; width: 100%; height: auto; shape-rendering: crispEdges; }
 .qf { fill: var(--qr-fg); }
 .qb { fill: var(--qr-bg); }
@@ -311,10 +313,33 @@ h1 em { font-style: normal; color: var(--brand); }
   width: clamp(40px, 10cqw, 56px); height: clamp(40px, 10cqw, 56px); flex: none; border-radius: 50%;
   display: grid; place-items: center; background: var(--ok); color: var(--surface); font: 800 1.5em/1 var(--display);
 }
-.b-cta {
-  align-self: flex-start; border: 0; border-radius: 8px; padding: 0.6em 1.1em;
-  background: var(--ink); color: var(--paper); font: 700 0.95em var(--body);
+
+/* EUDIPLO between the two devices: wired up to the app and across to the wallet. The active link
+   carries a dot in the direction the step's message travels (set by home.js). */
+.hub {
+  position: absolute; left: 0; bottom: 0; width: 55%; height: 19%;
+  display: grid; grid-template-columns: auto minmax(0, 1fr); align-content: center; gap: 0.3em 0.75em;
+  padding: 0.7em 1em; border-radius: 12px; background: var(--deep); color: var(--deep-ink);
+  box-shadow: var(--shadow); font-size: clamp(11px, 2.3cqw, 13px);
 }
+.hub .mark { width: 2.6em; height: 2.6em; grid-row: span 2; align-self: center; }
+.hub b { font: 750 1.2em/1.1 var(--display); letter-spacing: -0.01em; }
+.hub small { margin-left: 0.35em; font: 400 0.72em var(--body); letter-spacing: 0; color: var(--deep-soft); }
+.hub-log { font: 500 0.8em/1.4 var(--mono); color: var(--deep-ink); animation: viewIn 0.35s ease both; }
+.stage-link { position: absolute; background: var(--line-strong); }
+.link-app { left: calc(27.5% - 1px); top: 70%; width: 2px; height: 11%; }
+.link-wallet { left: 55%; top: calc(90.5% - 1px); width: 8%; height: 2px; }
+.stage-link.on { background: var(--brand); }
+.stage-link i {
+  position: absolute; left: 50%; top: 50%; width: 9px; height: 9px; border-radius: 50%;
+  transform: translate(-50%, -50%); background: var(--signal); box-shadow: 0 0 0 3px var(--signal-soft);
+  opacity: 0;
+}
+.stage-link.on i { opacity: 1; animation: run-y 1.3s ease-in-out infinite; }
+.link-wallet.on i { animation-name: run-x; }
+.stage-link.rev i { animation-direction: reverse; }
+@keyframes run-y { from { top: 0; } to { top: 100%; } }
+@keyframes run-x { from { left: 0; } to { left: 100%; } }
 
 .phone {
   position: absolute; right: 0; bottom: 0; width: 37%; height: 97%;
@@ -403,8 +428,18 @@ h1 em { font-style: normal; color: var(--brand); }
 
 @container stage (max-width: 469px) {
   .devices { height: auto; display: flex; flex-direction: column; }
-  .browser { position: relative; width: 100%; height: 252px; font-size: 12px; }
-  .phone { position: relative; width: min(240px, 74%); height: 420px; align-self: flex-end; margin-top: -40px; margin-right: 6px; }
+  .browser { position: relative; width: 100%; height: 276px; font-size: 12px; }
+  .b-body { padding-right: 1.25em; }
+  /* Stacked in reading order: app, EUDIPLO, wallet, with vertical links between them. */
+  .hub { position: relative; width: 100%; height: auto; padding: 0.8em 1em; font-size: 12px; }
+  .stage-link, .link-app, .link-wallet { position: relative; left: auto; top: auto; width: 2px; height: 22px; align-self: center; }
+  .link-wallet.on i { animation-name: run-y; }
+  .phone { position: relative; width: min(240px, 74%); height: 400px; align-self: center; }
+  /* Examples on one row, with an icon-only play/pause beside them (its aria-label still names it). */
+  .stage-top { flex-wrap: nowrap; align-items: stretch; }
+  .stage-top .tabs { flex: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .stage-top .tabs button { font-size: 12.5px; line-height: 1.2; padding: 7px 4px; text-align: center; }
+  .playpause { font-size: 0; gap: 0; width: 40px; justify-content: center; padding: 0; flex: none; }
   .screen { font-size: 11px; }
   .wide-only { display: none !important; }
   .steps button { font-size: 12.5px; padding-inline: 8px; }
@@ -417,6 +452,8 @@ h1 em { font-style: normal; color: var(--brand); }
 .flow-switch { width: fit-content; margin-top: 28px; }
 .code-pair { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 16px; margin-top: 40px; align-items: start; }
 .flow-switch + .code-pair { margin-top: 20px; }
+/* Side by side, the request column holds about 74 characters only above 1180px; below that the samples stack instead of clipping. */
+@media (max-width: 1180px) { .code-pair { grid-template-columns: minmax(0, 1fr); } }
 .code {
   background: var(--code-bg); color: var(--code-ink); border-radius: 14px; overflow: hidden;
   border: 1px solid var(--code-line); box-shadow: var(--shadow); min-width: 0; margin: 0;
@@ -505,7 +542,6 @@ h1 em { font-style: normal; color: var(--brand); }
 .flow-link:hover { text-decoration: underline; }
 .issuance-note code { font: 500 0.85em var(--mono); color: var(--deep-ink); background: var(--deep-chip); padding: 2px 6px; border-radius: 5px; }
 @media (max-width: 860px) {
-  .code-pair { grid-template-columns: minmax(0, 1fr); }
   .hood-list { columns: 1; }
   .phase summary { grid-template-columns: 4.4em minmax(0, 1fr) 1.2em; }
   .phase summary::after { grid-column: 3; }
@@ -529,6 +565,8 @@ h1 em { font-style: normal; color: var(--brand); }
 .hop.third small { color: var(--signal-text); }
 .hop.core { background: var(--deep); color: var(--deep-ink); border-color: var(--deep); }
 .hop.core small { color: var(--deep-soft); }
+/* On dark surfaces the navy fill alone is too quiet for the box the diagram is about. */
+@media (prefers-color-scheme: dark) { .hop.core { border-color: var(--brand); } }
 .route > .to { font: 500 15px/1 var(--mono); color: var(--ink-soft); }
 .boundary {
   position: relative; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
@@ -643,6 +681,15 @@ h1 em { font-style: normal; color: var(--brand); }
   font: 600 11px/1 var(--mono); background: var(--signal); color: var(--signal-ink);
   padding: 5px 9px; border-radius: 999px; white-space: nowrap; letter-spacing: 0.04em;
 }
+/* The dot sits on the exact date; the label hangs off to one side of it (set by home.js). */
+.today::after {
+  content: ""; position: absolute; top: 50%; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--signal); box-shadow: 0 0 0 3px var(--surface);
+}
+.today.before { transform: translate(calc(-100% - 10px), -50%); }
+.today.before::after { right: -10px; transform: translate(50%, -50%); }
+.today.after { transform: translate(10px, -50%); }
+.today.after::after { left: -10px; transform: translate(-50%, -50%); }
 .footnote { margin-top: 28px; font-size: 14px; color: var(--ink-soft); max-width: 46em; }
 @media (max-width: 860px) {
   .timeline { height: auto; margin-top: 36px; padding-left: 4px; }
@@ -653,7 +700,8 @@ h1 em { font-style: normal; color: var(--brand); }
     border: 0; padding: 0 0 26px 34px; text-align: left;
   }
   .ev::after, .ev.up::after, .ev.down::after, .ev.right::after { left: 0; right: auto; top: 6px; bottom: auto; }
-  .today { position: relative; display: inline-block; left: auto; top: auto; transform: none; margin: 0 0 26px 30px; }
+  .today, .today.before, .today.after { position: relative; display: inline-block; left: auto; top: auto; transform: none; margin: 0 0 26px 30px; }
+  .today::after { display: none; }
 }
 
 /* Proof */
@@ -720,7 +768,8 @@ h1 em { font-style: normal; color: var(--brand); }
 .run small code { font: 500 0.92em var(--mono); color: var(--deep-ink); }
 .run a { color: var(--deep-ink); }
 .cmd { display: flex; align-items: center; gap: 8px; background: var(--deep-chip); border: 1px solid var(--deep-line); border-radius: 10px; padding: 7px 7px 7px 14px; }
-.cmd code { flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; font: 500 13px/1.6 var(--mono); }
+/* Wraps instead of scrolling, so the whole command is visible before it is copied. */
+.cmd code { flex: 1; min-width: 0; overflow-wrap: anywhere; font: 500 13px/1.6 var(--mono); }
 .cmd .copy { color: var(--deep-ink); border-color: var(--deep-line); }
 .facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
 .facts li { display: grid; gap: 2px; padding-left: 16px; border-left: 2px solid var(--line-strong); color: var(--ink-soft); font-size: 15.5px; }

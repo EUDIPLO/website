@@ -28,6 +28,13 @@
             </div>
             <div class="b-body" id="b-body"></div>
           </div>
+          <span class="stage-link link-app" id="link-app" aria-hidden="true"><i></i></span>
+          <div class="hub" aria-hidden="true">
+            <svg class="mark" viewBox="0 0 176 176" focusable="false"><use href="#diplo"/></svg>
+            <b>EUDIPLO <small>on your server</small></b>
+            <span class="hub-log" id="hub-log"></span>
+          </div>
+          <span class="stage-link link-wallet" id="link-wallet" aria-hidden="true"><i></i></span>
           <div class="phone" aria-hidden="true">
             <div class="screen">
               <div class="p-status"><span>9:41</span><span class="bars"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:10px"></i></span></div>
@@ -83,7 +90,9 @@
 <span class="tk">const</span> eudiplo = <span class="tk">new</span> <span class="tf">EudiploClient</span>({ baseUrl, clientId, clientSecret });
 
 <span class="tc">// Ask the customer's wallet for proof of age</span>
-<span class="tk">const</span> request = <span class="tk">await</span> eudiplo.<span class="tf">createPresentationRequest</span>({ configId: <span class="ts">'age-over-18'</span> });
+<span class="tk">const</span> request = <span class="tk">await</span> eudiplo.<span class="tf">createPresentationRequest</span>({
+  configId: <span class="ts">'age-over-18'</span>,
+});
 <span class="tf">showQrCode</span>(request.crossDeviceUri);
 
 <span class="tc">// Resolves once EUDIPLO has verified the answer</span>
@@ -96,7 +105,9 @@
 <span class="tc">// Offer the employee ID with claims from your HR system</span>
 <span class="tk">const</span> offer = <span class="tk">await</span> eudiplo.<span class="tf">createIssuanceOffer</span>({
   credentialConfigurationIds: [<span class="ts">'employee-id'</span>],
-  claims: { <span class="ts">'employee-id'</span>: { given_name: <span class="ts">'Lena'</span>, employee_no: <span class="ts">'E-4711'</span> } },
+  claims: {
+    <span class="ts">'employee-id'</span>: { given_name: <span class="ts">'Lena'</span>, employee_no: <span class="ts">'E-4711'</span> },
+  },
 });
 <span class="tf">showQrCode</span>(offer.uri);
 
@@ -130,7 +141,8 @@ TOKEN=$(<span class="tf">curl</span> -s -X POST https://eudiplo.example.com/api/
   -d <span class="ts">'{ "response_type": "uri", "flow": "pre_authorized_code",
         "credentialConfigurationIds": ["employee-id"],
         "credentialClaims": { "employee-id": { "type": "inline",
-          "claims": { "given_name": "Lena", "employee_no": "E-4711" } } },
+          "claims": { "given_name": "Lena",
+                      "employee_no": "E-4711" } } },
         "webhookEndpointId": "hr-backend" }'</span>
 <span class="tc"># → { "uri": "openid-credential-offer://…", "session": "5c1e9a72-…" }</span>
 
@@ -529,7 +541,7 @@ TOKEN=$(<span class="tf">curl</span> -s -X POST https://eudiplo.example.com/api/
           <ol class="run">
             <li>
               <h4>Install the CLI</h4>
-              <div class="cmd"><code id="cmd-install">curl -fsSL https://eudiplo.dev/install.sh | bash</code><button type="button" class="copy" data-copy="cmd-install">Copy</button></div>
+              <div class="cmd"><code id="cmd-install">curl -fsSL https://eudiplo.dev/<wbr>install.sh | bash</code><button type="button" class="copy" data-copy="cmd-install">Copy</button></div>
               <small>The installer checks the release checksum. Prefer npm? Use <code>npm install -g @eudiplo/cli</code> with Node.js 22.12 or later.</small>
             </li>
             <li>
