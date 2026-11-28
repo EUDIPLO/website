@@ -49,7 +49,16 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
     today.className = 'today';
     today.style.setProperty('--x', x.toFixed(2) + '%');
     today.textContent = 'Today · ' + now.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
-    const next = [...tl.querySelectorAll('.ev')].find((ev) => new Date(ev.dataset.date) > now);
+    const events = [...tl.querySelectorAll('.ev')];
+    const position = (ev) => Number.parseFloat(ev.style.getPropertyValue('--x'));
+    // A dot marks the exact date; the label sits on the side away from the
+    // nearest event, so it never covers that event's marker on the axis.
+    const nearest = events.reduce(
+      (best, ev) => (best === null || Math.abs(position(ev) - x) < Math.abs(position(best) - x) ? ev : best),
+      null,
+    );
+    if (nearest) today.classList.add(position(nearest) > x ? 'before' : 'after');
+    const next = events.find((ev) => new Date(ev.dataset.date) > now);
     tl.insertBefore(today, next || null);
   })();
 

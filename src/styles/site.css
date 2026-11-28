@@ -98,8 +98,9 @@
     --brand: #bec2ff;
     --brand-soft: #1b2160;
     --brand-on: #00006e;
-    --deep: #030918;
-    --deep-line: rgba(255, 255, 255, 0.1);
+    /* A saturated navy, not near-black: it has to stand apart from --paper so the waterline and the deep panels stay visible. */
+    --deep: #0b1d57;
+    --deep-line: rgba(255, 255, 255, 0.12);
     --signal-soft: #502400;
     --signal-text: #ffb787;
     --ok: #43d39b;
@@ -403,8 +404,14 @@ h1 em { font-style: normal; color: var(--brand); }
 
 @container stage (max-width: 469px) {
   .devices { height: auto; display: flex; flex-direction: column; }
-  .browser { position: relative; width: 100%; height: 252px; font-size: 12px; }
-  .phone { position: relative; width: min(240px, 74%); height: 420px; align-self: flex-end; margin-top: -40px; margin-right: 6px; }
+  .browser { position: relative; width: 100%; height: 276px; font-size: 12px; }
+  /* Stacked below the browser, not over it: an overlap would hide the browser's QR panel. */
+  .phone { position: relative; width: min(240px, 74%); height: 400px; align-self: center; margin-top: 12px; }
+  /* Examples on one row, with an icon-only play/pause beside them (its aria-label still names it). */
+  .stage-top { flex-wrap: nowrap; align-items: stretch; }
+  .stage-top .tabs { flex: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .stage-top .tabs button { font-size: 12.5px; line-height: 1.2; padding: 7px 4px; text-align: center; }
+  .playpause { font-size: 0; gap: 0; width: 40px; justify-content: center; padding: 0; flex: none; }
   .screen { font-size: 11px; }
   .wide-only { display: none !important; }
   .steps button { font-size: 12.5px; padding-inline: 8px; }
@@ -417,6 +424,8 @@ h1 em { font-style: normal; color: var(--brand); }
 .flow-switch { width: fit-content; margin-top: 28px; }
 .code-pair { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 16px; margin-top: 40px; align-items: start; }
 .flow-switch + .code-pair { margin-top: 20px; }
+/* Side by side, the request column holds about 74 characters only above 1180px; below that the samples stack instead of clipping. */
+@media (max-width: 1180px) { .code-pair { grid-template-columns: minmax(0, 1fr); } }
 .code {
   background: var(--code-bg); color: var(--code-ink); border-radius: 14px; overflow: hidden;
   border: 1px solid var(--code-line); box-shadow: var(--shadow); min-width: 0; margin: 0;
@@ -505,7 +514,6 @@ h1 em { font-style: normal; color: var(--brand); }
 .flow-link:hover { text-decoration: underline; }
 .issuance-note code { font: 500 0.85em var(--mono); color: var(--deep-ink); background: var(--deep-chip); padding: 2px 6px; border-radius: 5px; }
 @media (max-width: 860px) {
-  .code-pair { grid-template-columns: minmax(0, 1fr); }
   .hood-list { columns: 1; }
   .phase summary { grid-template-columns: 4.4em minmax(0, 1fr) 1.2em; }
   .phase summary::after { grid-column: 3; }
@@ -529,6 +537,8 @@ h1 em { font-style: normal; color: var(--brand); }
 .hop.third small { color: var(--signal-text); }
 .hop.core { background: var(--deep); color: var(--deep-ink); border-color: var(--deep); }
 .hop.core small { color: var(--deep-soft); }
+/* On dark surfaces the navy fill alone is too quiet for the box the diagram is about. */
+@media (prefers-color-scheme: dark) { .hop.core { border-color: var(--brand); } }
 .route > .to { font: 500 15px/1 var(--mono); color: var(--ink-soft); }
 .boundary {
   position: relative; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
@@ -643,6 +653,15 @@ h1 em { font-style: normal; color: var(--brand); }
   font: 600 11px/1 var(--mono); background: var(--signal); color: var(--signal-ink);
   padding: 5px 9px; border-radius: 999px; white-space: nowrap; letter-spacing: 0.04em;
 }
+/* The dot sits on the exact date; the label hangs off to one side of it (set by home.js). */
+.today::after {
+  content: ""; position: absolute; top: 50%; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--signal); box-shadow: 0 0 0 3px var(--surface);
+}
+.today.before { transform: translate(calc(-100% - 10px), -50%); }
+.today.before::after { right: -10px; transform: translate(50%, -50%); }
+.today.after { transform: translate(10px, -50%); }
+.today.after::after { left: -10px; transform: translate(-50%, -50%); }
 .footnote { margin-top: 28px; font-size: 14px; color: var(--ink-soft); max-width: 46em; }
 @media (max-width: 860px) {
   .timeline { height: auto; margin-top: 36px; padding-left: 4px; }
@@ -653,7 +672,8 @@ h1 em { font-style: normal; color: var(--brand); }
     border: 0; padding: 0 0 26px 34px; text-align: left;
   }
   .ev::after, .ev.up::after, .ev.down::after, .ev.right::after { left: 0; right: auto; top: 6px; bottom: auto; }
-  .today { position: relative; display: inline-block; left: auto; top: auto; transform: none; margin: 0 0 26px 30px; }
+  .today, .today.before, .today.after { position: relative; display: inline-block; left: auto; top: auto; transform: none; margin: 0 0 26px 30px; }
+  .today::after { display: none; }
 }
 
 /* Proof */
@@ -720,7 +740,8 @@ h1 em { font-style: normal; color: var(--brand); }
 .run small code { font: 500 0.92em var(--mono); color: var(--deep-ink); }
 .run a { color: var(--deep-ink); }
 .cmd { display: flex; align-items: center; gap: 8px; background: var(--deep-chip); border: 1px solid var(--deep-line); border-radius: 10px; padding: 7px 7px 7px 14px; }
-.cmd code { flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; font: 500 13px/1.6 var(--mono); }
+/* Wraps instead of scrolling, so the whole command is visible before it is copied. */
+.cmd code { flex: 1; min-width: 0; overflow-wrap: anywhere; font: 500 13px/1.6 var(--mono); }
 .cmd .copy { color: var(--deep-ink); border-color: var(--deep-line); }
 .facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
 .facts li { display: grid; gap: 2px; padding-left: 16px; border-left: 2px solid var(--line-strong); color: var(--ink-soft); font-size: 15.5px; }
