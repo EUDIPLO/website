@@ -263,9 +263,9 @@ h1 em { font-style: normal; color: var(--brand); }
 }
 .playpause svg { width: 10px; height: 10px; fill: currentColor; }
 
-.devices { position: relative; height: min(72cqw, 470px); }
+.devices { position: relative; height: min(78cqw, 500px); }
 .browser {
-  position: absolute; left: 0; top: 0; width: 77%; height: 80%;
+  position: absolute; left: 0; top: 0; width: 77%; height: 70%;
   background: var(--surface); border: 1px solid var(--line-strong); border-radius: 12px;
   overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow);
   font-size: clamp(11px, 2.4cqw, 13.5px);
@@ -279,7 +279,8 @@ h1 em { font-style: normal; color: var(--brand); }
   font: 500 0.82em/1.2 var(--mono); color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .b-url svg { width: 9px; height: 11px; flex: none; fill: var(--ok); }
-.b-body { flex: 1; min-height: 0; padding: 1.15em 1.25em; display: flex; flex-direction: column; gap: 0.85em; overflow: hidden; }
+/* The right padding keeps the content clear of the phone, which overlaps the browser's last 18%. */
+.b-body { flex: 1; min-height: 0; padding: 1.15em calc(19% + 0.75em) 1.15em 1.25em; display: flex; flex-direction: column; gap: 0.75em; overflow: hidden; }
 .b-title { font: 720 1.4em/1.1 var(--display); letter-spacing: -0.01em; }
 .b-sub { color: var(--ink-soft); }
 .b-lines { list-style: none; margin: 0; padding: 0; }
@@ -298,7 +299,7 @@ h1 em { font-style: normal; color: var(--brand); }
 .b-panel p { color: var(--ink-soft); font-size: 0.92em; line-height: 1.4; margin-top: 2px; }
 .b-panel.ok { border: 1px solid transparent; background: var(--ok-soft); }
 .b-panel.ok strong { color: var(--ok); }
-.qr { width: clamp(64px, 16cqw, 92px); flex: none; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); }
+.qr { width: clamp(64px, 13cqw, 84px); flex: none; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); }
 .qr svg { display: block; width: 100%; height: auto; shape-rendering: crispEdges; }
 .qf { fill: var(--qr-fg); }
 .qb { fill: var(--qr-bg); }
@@ -312,10 +313,33 @@ h1 em { font-style: normal; color: var(--brand); }
   width: clamp(40px, 10cqw, 56px); height: clamp(40px, 10cqw, 56px); flex: none; border-radius: 50%;
   display: grid; place-items: center; background: var(--ok); color: var(--surface); font: 800 1.5em/1 var(--display);
 }
-.b-cta {
-  align-self: flex-start; border: 0; border-radius: 8px; padding: 0.6em 1.1em;
-  background: var(--ink); color: var(--paper); font: 700 0.95em var(--body);
+
+/* EUDIPLO between the two devices: wired up to the app and across to the wallet. The active link
+   carries a dot in the direction the step's message travels (set by home.js). */
+.hub {
+  position: absolute; left: 0; bottom: 0; width: 55%; height: 19%;
+  display: grid; grid-template-columns: auto minmax(0, 1fr); align-content: center; gap: 0.3em 0.75em;
+  padding: 0.7em 1em; border-radius: 12px; background: var(--deep); color: var(--deep-ink);
+  box-shadow: var(--shadow); font-size: clamp(11px, 2.3cqw, 13px);
 }
+.hub .mark { width: 2.6em; height: 2.6em; grid-row: span 2; align-self: center; }
+.hub b { font: 750 1.2em/1.1 var(--display); letter-spacing: -0.01em; }
+.hub small { margin-left: 0.35em; font: 400 0.72em var(--body); letter-spacing: 0; color: var(--deep-soft); }
+.hub-log { font: 500 0.8em/1.4 var(--mono); color: var(--deep-ink); animation: viewIn 0.35s ease both; }
+.stage-link { position: absolute; background: var(--line-strong); }
+.link-app { left: calc(27.5% - 1px); top: 70%; width: 2px; height: 11%; }
+.link-wallet { left: 55%; top: calc(90.5% - 1px); width: 8%; height: 2px; }
+.stage-link.on { background: var(--brand); }
+.stage-link i {
+  position: absolute; left: 50%; top: 50%; width: 9px; height: 9px; border-radius: 50%;
+  transform: translate(-50%, -50%); background: var(--signal); box-shadow: 0 0 0 3px var(--signal-soft);
+  opacity: 0;
+}
+.stage-link.on i { opacity: 1; animation: run-y 1.3s ease-in-out infinite; }
+.link-wallet.on i { animation-name: run-x; }
+.stage-link.rev i { animation-direction: reverse; }
+@keyframes run-y { from { top: 0; } to { top: 100%; } }
+@keyframes run-x { from { left: 0; } to { left: 100%; } }
 
 .phone {
   position: absolute; right: 0; bottom: 0; width: 37%; height: 97%;
@@ -405,8 +429,12 @@ h1 em { font-style: normal; color: var(--brand); }
 @container stage (max-width: 469px) {
   .devices { height: auto; display: flex; flex-direction: column; }
   .browser { position: relative; width: 100%; height: 276px; font-size: 12px; }
-  /* Stacked below the browser, not over it: an overlap would hide the browser's QR panel. */
-  .phone { position: relative; width: min(240px, 74%); height: 400px; align-self: center; margin-top: 12px; }
+  .b-body { padding-right: 1.25em; }
+  /* Stacked in reading order: app, EUDIPLO, wallet, with vertical links between them. */
+  .hub { position: relative; width: 100%; height: auto; padding: 0.8em 1em; font-size: 12px; }
+  .stage-link, .link-app, .link-wallet { position: relative; left: auto; top: auto; width: 2px; height: 22px; align-self: center; }
+  .link-wallet.on i { animation-name: run-y; }
+  .phone { position: relative; width: min(240px, 74%); height: 400px; align-self: center; }
   /* Examples on one row, with an icon-only play/pause beside them (its aria-label still names it). */
   .stage-top { flex-wrap: nowrap; align-items: stretch; }
   .stage-top .tabs { flex: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }

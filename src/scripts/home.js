@@ -138,9 +138,10 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
       kind: 'verify', url: 'shop.example/checkout', title: 'Checkout', seed: 7,
       extra: () => cartLines,
       ask: ['Confirm you are over 18', 'Scan with your EU Digital Identity Wallet to continue.'],
-      done: ['Age confirmed', 'Over 18. No name or birth date was shared.'], cta: 'Place order · €34.40',
+      done: ['Age confirmed', 'Over 18. No name or birth date was shared.'],
       requester: 'shop.example', from: 'Personal ID', claims: ['Age over 18'],
       purpose: 'Age check for alcohol', note: 'Name, birth date and address stay in your wallet.', shared: '1 attribute',
+      log: ['Signed a request for “over 18”', 'Sent the signed request', 'Received the encrypted answer', 'Checked it and called your webhook'],
       hood: [
         'Your backend calls POST /api/verifier/offer. EUDIPLO builds the DCQL query, signs the request and returns the link for the QR code.',
         'The wallet fetches the signed request and checks the access certificate of shop.example.',
@@ -152,9 +153,10 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
       kind: 'verify', url: 'bank.example/open-account', title: 'Open a current account', seed: 21,
       extra: (state) => bankForm(state === 'done'),
       ask: ['Fill this in with your wallet', 'Your verified details in one scan, no photo of your ID card.'],
-      done: ['Identity verified', 'Taken from the Personal ID issued by Germany.'], cta: 'Continue',
+      done: ['Identity verified', 'Taken from the Personal ID issued by Germany.'],
       requester: 'bank.example', from: 'Personal ID', claims: ['Given name', 'Family name', 'Date of birth', 'Address'],
       purpose: 'Open a current account', note: 'Only these four attributes are shared.', shared: '4 attributes',
+      log: ['Signed a request for four claims', 'Sent the signed request', 'Received the encrypted answer', 'Checked the PID, called your webhook'],
       hood: [
         'Your backend calls POST /api/verifier/offer with the onboarding configuration. One request accepts the PID as SD-JWT VC or mdoc.',
         'The wallet fetches the signed request and checks the access certificate of bank.example.',
@@ -166,8 +168,9 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
       kind: 'issue', url: 'hr.example/me/employee-id', title: 'Your employee ID', seed: 42,
       extra: () => `<p class="b-sub wide-only">Use it at the office door and to sign in to internal tools.</p>`,
       ask: ['Add your employee ID to your wallet', 'Scan with your EU Digital Identity Wallet.'],
-      done: ['Employee ID issued', 'Bound to Lena’s phone. HR can suspend or revoke it.'], cta: 'Done',
+      done: ['Employee ID issued', 'Bound to Lena’s phone. HR can suspend or revoke it.'],
       requester: 'hr.example',
+      log: ['Created a credential offer', 'Gave the wallet an access token', 'Checked the wallet’s key proof', 'Signed the ID, notified your webhook'],
       hood: [
         'Your backend calls POST /api/issuer/offer with the employee’s claims. EUDIPLO returns a credential offer.',
         'The wallet reads the issuer metadata and redeems the pre-authorized code for a token.',
@@ -178,6 +181,7 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
   };
   const ORDER = ['age', 'bank', 'staff'];
   const DURATIONS = [3400, 2300, 3800, 4600];
+  const LINKS = [['app', false], ['wallet', false], ['wallet', true], ['app', true]];
 
   const pidCard = `<div class="cred pid"><div class="cred-top"><b>Personal ID</b><span>DE</span></div><div class="cred-bottom"><span>Lena Fischer</span><span class="mrz-mini">IDD&lt;&lt;FISCHER&lt;&lt;LENA&lt;&lt;&lt;&lt;&lt;&lt;</span></div></div>`;
   const mdlCard = `<div class="cred mdl"><div class="cred-top"><b>Driving licence</b><span>mDL</span></div><div class="cred-bottom"><span>Categories B, A1</span></div></div>`;
@@ -191,7 +195,7 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
     } else if (state === 'wait') {
       panel = `<div class="b-panel"><span class="spinner"></span><div><strong>Waiting for your wallet</strong><p>${S.kind === 'issue' ? 'Accept the offer' : 'Approve the request'} on your phone.</p></div></div>`;
     } else {
-      panel = `<div class="b-panel ok"><span class="tick">✓</span><div><strong>${S.done[0]}</strong><p>${S.done[1]}</p></div></div><span class="b-cta wide-only">${S.cta}</span>`;
+      panel = `<div class="b-panel ok"><span class="tick">✓</span><div><strong>${S.done[0]}</strong><p>${S.done[1]}</p></div></div>`;
     }
     return `<div class="b-title">${S.title}</div>${S.extra(state)}${panel}`;
   }
@@ -243,6 +247,18 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
     view.getBoundingClientRect(); // force a reflow so the animation restarts
     view.style.animation = '';
     $('hood-text').textContent = S.hood[step];
+    $('hub-log').textContent = S.log[step];
+    // The message of each step: app to EUDIPLO, EUDIPLO to wallet, wallet to EUDIPLO, EUDIPLO to app.
+    const [active, reverse] = LINKS[step];
+    ['app', 'wallet'].forEach((name) => $('link-' + name).classList.remove('on', 'rev'));
+    const link = $('link-' + active);
+    link.getBoundingClientRect(); // force a reflow so the dot starts from its origin
+    link.classList.add('on');
+    link.classList.toggle('rev', reverse);
+    const log = $('hub-log');
+    log.style.animation = 'none';
+    log.getBoundingClientRect();
+    log.style.animation = '';
     tabButtons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.scenario === scenario)));
     stepButtons.forEach((b, i) => {
       if (i === step) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
